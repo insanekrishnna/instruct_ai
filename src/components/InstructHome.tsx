@@ -105,22 +105,8 @@ function Hero() {
 function MeetSection() {
   return (
     <section id="meet" className="instruct-meet">
-      <h2>
-        <span>Hire a digital employee,</span>
-        <span>Integrated everywhere.</span>
-      </h2>
-      <div className="instruct-task-grid">
-        {taskCards.map((card) => (
-          <article key={card.label} className="instruct-task-card">
-            <span>{card.label}</span>
-            <p>{card.copy}</p>
-            <div>
-              <button aria-label="Add"><ChartLine size={18} /></button>
-              <button aria-label="Run"><ArrowRight size={18} /></button>
-            </div>
-          </article>
-        ))}
-      </div>
+      
+      
     </section>
   );
 }
@@ -128,65 +114,13 @@ function MeetSection() {
 function FinalCta() {
   return (
     <section className="instruct-cta">
-      <h2>Get started for free today.</h2>
-      <p>Sign up now and start automating your work in minutes with our free plan, or get in touch with our team to discuss your needs.</p>
-      <div>
-        <Link className="instruct-outline" href="https://cal.com/instruct">Talk to us</Link>
-        <Link className="instruct-dark" href="/auth/register">Sign up <ArrowRight size={16} /></Link>
-      </div>
+      <h2>The words behind every viral post.</h2>
+      <p>Your idea deserves more than a boring caption. We make it loud, sharp, and impossible to ignore</p>
+    
     </section>
   );
 }
 
-function ViralToolsSection() {
-  const tools = [
-    {
-      name: "✨ Caption Generator",
-      desc: "Create viral captions with AI. Choose your style, add images, and get instant engagement scores.",
-      href: "/generate",
-    },
-    {
-      name: "🎣 Hook Generator",
-      desc: "Generate 8 proven hook formats to stop the scroll on any platform.",
-      href: "/hook",
-    },
-    {
-      name: "♻️ Content Repurposer",
-      desc: "Transform long-form content into platform-optimized posts instantly.",
-      href: "/repurpose",
-    },
-    {
-      name: "🧵 Thread & Carousel",
-      desc: "Create compelling Twitter threads or Instagram carousel scripts.",
-      href: "/thread",
-    },
-  ];
-
-  return (
-    <section id="tools" className="instruct-meet">
-      <h2>
-        <span>Viral Content Tools,</span>
-        <span>Powered by AI.</span>
-      </h2>
-      <p style={{ textAlign: "center", marginBottom: "2rem", color: "var(--text-secondary)", fontSize: "1.1rem" }}>
-        A complete suite of AI tools for creators and content marketers
-      </p>
-      <div className="instruct-task-grid">
-        {tools.map((tool) => (
-          <Link key={tool.href} href={tool.href}>
-            <article className="instruct-task-card" style={{ textDecoration: "none" }}>
-              <span>{tool.name}</span>
-              <p>{tool.desc}</p>
-              <div>
-                <button onClick={(e) => { e.preventDefault(); }} aria-label="Explore"><ArrowRight size={18} /></button>
-              </div>
-            </article>
-          </Link>
-        ))}
-      </div>
-    </section>
-  );
-}
 
 function Footer() {
   return (
@@ -216,7 +150,6 @@ export function InstructHome() {
       <main className="instruct-page">
         <Hero />
         <MeetSection />
-        <ViralToolsSection />
         <FinalCta />
       </main>
       <Footer />

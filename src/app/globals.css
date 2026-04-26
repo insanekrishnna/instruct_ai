@@ -263,7 +263,7 @@ body {
   background: linear-gradient(180deg, #73787d 0%, #34383d 88%);
   background-clip: text;
   color: transparent;
-  font-family: Georgia, "Times New Roman", serif;
+  font-family: "ivypresto-headline", serif;
   font-size: 61px;
   font-weight: 400;
   line-height: 1.25;
@@ -485,7 +485,7 @@ body {
 .instruct-task-card span {
   margin-bottom: auto;
   color: #7b8287;
-  font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
+  font-family: var(--font-satoshi);
   font-size: 13px;
   font-weight: 700;
   letter-spacing: .08em;
