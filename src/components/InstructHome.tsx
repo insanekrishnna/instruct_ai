@@ -7,7 +7,7 @@ import { ArrowRight, ChartLine, Shell, ImageIcon, Mail, Menu, Mic, Play, Search,
 
 const featureCards = [
   {
-    title: "Drop. Generate. Go Viral.",
+    title: "Drop. Generate. Viral.",
     copy: "Turn any raw idea into a post that breaks the feed",
     tone: "rose",
     icon: ChartScatter,
@@ -47,30 +47,7 @@ const taskCards = [
   },
 ];
 
-function Header() {
-  return (
-    <nav className="instruct-header-wrap">
-      <header className="instruct-header">
-        <div className="instruct-nav-left">
-          <Link href="/" aria-label="Instruct home" className="instruct-logo-link">
-            <Image src="/images/instruct/avtar.png" alt="Instruct" width={30} height={30} priority />
-          </Link>
-          <div className="instruct-nav-links">
-           
-          </div>
-        </div>
-        <button className="instruct-menu" aria-label="Open menu">
-          <Menu size={22} />
-        </button>
-        <div className="instruct-actions">
-          
-          <Link className="instruct-outline" href="/auth">Log in</Link>
-          <Link className="instruct-dark" href="/auth/register">Sign up <ArrowRight size={16} /></Link>
-        </div>
-      </header>
-    </nav>
-  );
-}
+
 
 function Hero() {
   return (
@@ -236,7 +213,6 @@ function Footer() {
 export function InstructHome() {
   return (
     <>
-      <Header />
       <main className="instruct-page">
         <Hero />
         <MeetSection />
