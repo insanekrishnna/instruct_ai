@@ -72,11 +72,6 @@
 }
 
 @layer base {
-  * {
-    @apply border;
-    outline: 2px solid color-mix(in srgb, var(--ring) 50%, transparent);
-    outline-offset: 2px;
-  }
   body {
     @apply bg-background text-foreground;
   }
