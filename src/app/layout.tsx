@@ -14,19 +14,15 @@ const jetbrainsMono = JetBrains_Mono({
 
 export const metadata: Metadata = {
   metadataBase: new URL("https://instruct.ai"),
-  title: "Instruct AI - Automate Your Work",
-  description: "Instruct is a General AI agent that connects to your apps and executes tasks on your behalf.",
+  title: "Capmax AI - Make it Viral",
+  description: "Where viral posts are written.",
   icons: {
-    icon: [
-      { url: "/seo/favicon.ico" },
-      { url: "/seo/favicon-32x32.png", sizes: "32x32", type: "image/png" },
-      { url: "/seo/favicon-16x16.png", sizes: "16x16", type: "image/png" },
-    ],
-    apple: "/seo/apple-touch-icon.png",
+    icon: "/images/instruct/avtar.png",
+    apple: "/images/instruct/avtar.png",
   },
   openGraph: {
-    title: "Instruct AI - Automate Your Work",
-    description: "Automate your work across apps, just by asking.",
+    title: "Capmax AI - Make it Viral",
+    description: "Where viral posts are written.",
     images: ["/seo/meta-instruct.png"],
   },
 };

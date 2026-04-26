@@ -53,7 +53,7 @@ function Header() {
       <header className="instruct-header">
         <div className="instruct-nav-left">
           <Link href="/" aria-label="Instruct home" className="instruct-logo-link">
-            <Image src="/images/instruct/dark-icon.svg" alt="Instruct" width={100} height={32} priority />
+            <Image src="/images/instruct/avtar.png" alt="Instruct" width={100} height={32} priority />
           </Link>
           <div className="instruct-nav-links">
             <Link href="#features">Features</Link>
@@ -84,8 +84,8 @@ function Hero() {
         <Link href="/auth/register" className="instruct-free-pill">
           Get started for free <ArrowRight size={16} />
         </Link>
-        <h1>AI that works for you</h1>
-        <p>Automate your work across apps, just by asking.</p>
+        <h1>Every viral post starts here</h1>
+        <p>Where viral posts are written</p>
         <div className="instruct-prompt">
           <span>Delegate a task or ask a question...</span>
           <div>
