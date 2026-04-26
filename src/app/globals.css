@@ -599,51 +599,6 @@ body {
   font-size: 14px;
 }
 
-.instruct-cookie {
-  position: fixed;
-  z-index: 80;
-  left: 16px;
-  bottom: 16px;
-  width: 300px;
-  border-radius: 10px;
-  background: #050607;
-  color: #fff;
-  padding: 20px 16px 16px;
-  box-shadow: 0 16px 40px rgba(0,0,0,.16);
-}
-
-.instruct-cookie h2 {
-  margin: 0 0 12px;
-  font-size: 18px;
-  font-weight: 700;
-}
-
-.instruct-cookie p {
-  margin: 0;
-  color: #a9adb2;
-  font-size: 14px;
-  line-height: 1.35;
-}
-
-.instruct-cookie div {
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: 12px;
-  margin-top: 18px;
-}
-
-.instruct-cookie button {
-  height: 32px;
-  border-radius: 10px;
-  color: #fff;
-  font-weight: 650;
-}
-
-.instruct-cookie button:last-child {
-  background: #fff;
-  color: #111316;
-}
-
 @keyframes instruct-fade {
   from { opacity: 0; }
   to { opacity: 1; }
@@ -758,12 +713,5 @@ body {
 
   .instruct-footer-legal {
     justify-content: center;
-  }
-
-  .instruct-cookie {
-    left: 16px;
-    right: 16px;
-    bottom: 16px;
-    width: auto;
   }
 }

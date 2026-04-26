@@ -162,21 +162,6 @@ function FinalCta() {
   );
 }
 
-function CookieBox() {
-  const [visible, setVisible] = useState(true);
-  if (!visible) return null;
-  return (
-    <aside className="instruct-cookie">
-      <h2>Cookie Settings</h2>
-      <p>We use cookies to enhance your experience, analyze site traffic and deliver personalized content. Read our Privacy Policy</p>
-      <div>
-        <button onClick={() => setVisible(false)}>Reject</button>
-        <button onClick={() => setVisible(false)}>Accept</button>
-      </div>
-    </aside>
-  );
-}
-
 function Footer() {
   return (
     <footer className="instruct-footer">
@@ -209,7 +194,6 @@ export function InstructHome() {
         <FinalCta />
       </main>
       <Footer />
-      <CookieBox />
     </>
   );
 }
