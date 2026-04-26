@@ -57,6 +57,7 @@ function Header() {
           </Link>
           <div className="instruct-nav-links">
             <Link href="#features">Features</Link>
+            <Link href="#tools">Tools</Link>
             <Link href="/blog">Blog</Link>
           </div>
         </div>
@@ -66,7 +67,7 @@ function Header() {
         <div className="instruct-actions">
           <Link href="https://cal.com/instruct">Talk to us</Link>
           <Link className="instruct-outline" href="/auth">Log in</Link>
-          <Link className="instruct-dark" href="/auth/register">Get started</Link>
+          <Link className="instruct-dark" href="/generate">Try Tools</Link>
         </div>
       </header>
     </nav>
@@ -162,6 +163,56 @@ function FinalCta() {
   );
 }
 
+function ViralToolsSection() {
+  const tools = [
+    {
+      name: "✨ Caption Generator",
+      desc: "Create viral captions with AI. Choose your style, add images, and get instant engagement scores.",
+      href: "/generate",
+    },
+    {
+      name: "🎣 Hook Generator",
+      desc: "Generate 8 proven hook formats to stop the scroll on any platform.",
+      href: "/hook",
+    },
+    {
+      name: "♻️ Content Repurposer",
+      desc: "Transform long-form content into platform-optimized posts instantly.",
+      href: "/repurpose",
+    },
+    {
+      name: "🧵 Thread & Carousel",
+      desc: "Create compelling Twitter threads or Instagram carousel scripts.",
+      href: "/thread",
+    },
+  ];
+
+  return (
+    <section id="tools" className="instruct-meet">
+      <h2>
+        <span>Viral Content Tools,</span>
+        <span>Powered by AI.</span>
+      </h2>
+      <p style={{ textAlign: "center", marginBottom: "2rem", color: "var(--text-secondary)", fontSize: "1.1rem" }}>
+        A complete suite of AI tools for creators and content marketers
+      </p>
+      <div className="instruct-task-grid">
+        {tools.map((tool) => (
+          <Link key={tool.href} href={tool.href}>
+            <article className="instruct-task-card" style={{ textDecoration: "none" }}>
+              <span>{tool.name}</span>
+              <p>{tool.desc}</p>
+              <div>
+                <button onClick={(e) => { e.preventDefault(); }} aria-label="Explore"><ArrowRight size={18} /></button>
+              </div>
+            </article>
+          </Link>
+        ))}
+      </div>
+    </section>
+  );
+}
+
 function Footer() {
   return (
     <footer className="instruct-footer">
@@ -191,6 +242,7 @@ export function InstructHome() {
       <main className="instruct-page">
         <Hero />
         <MeetSection />
+        <ViralToolsSection />
         <FinalCta />
       </main>
       <Footer />
