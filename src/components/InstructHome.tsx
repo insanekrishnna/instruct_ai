@@ -56,18 +56,16 @@ function Header() {
             <Image src="/images/instruct/avtar.png" alt="Instruct" width={100} height={32} priority />
           </Link>
           <div className="instruct-nav-links">
-            <Link href="#features">Features</Link>
-            <Link href="#tools">Tools</Link>
-            <Link href="/blog">Blog</Link>
+           
           </div>
         </div>
         <button className="instruct-menu" aria-label="Open menu">
           <Menu size={22} />
         </button>
         <div className="instruct-actions">
-          <Link href="https://cal.com/instruct">Talk to us</Link>
+          
           <Link className="instruct-outline" href="/auth">Log in</Link>
-          <Link className="instruct-dark" href="/generate">Try Tools</Link>
+          <Link className="instruct-dark" href="/auth/register">Sign up <ArrowRight size={16} /></Link>
         </div>
       </header>
     </nav>
