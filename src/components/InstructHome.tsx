@@ -3,32 +3,32 @@
 import Image from "next/image";
 import Link from "next/link";
 import { useState } from "react";
-import { ArrowRight, BarChart2, Heart, ImageIcon, Mail, Menu, Mic, Play, Search, Sparkles, Workflow } from "lucide-react";
+import { ArrowRight, ChartLine, Shell, ImageIcon, Mail, Menu, Mic, Play, Search, FastForward, Workflow, Blend, ChartScatter, Speech, HandHeart, HandCoins, Earth } from "lucide-react";
 
 const featureCards = [
   {
-    title: "Research & Summarize",
-    copy: "Condenses a research topic into an engaging document",
+    title: "Drop. Generate. Go Viral.",
+    copy: "Turn any raw idea into a post that breaks the feed",
     tone: "rose",
-    icon: Search,
+    icon: ChartScatter,
   },
   {
-    title: "Generate Podcast",
-    copy: "Creates a podcast episode on your chosen topic",
+    title: "One Idea. Every Platform.",
+    copy: "Paste once, Get written for Instagram, LinkedIn, Twitter",
     tone: "sage",
-    icon: Play,
+    icon: Earth,
   },
   {
-    title: "Inbox cleaner",
-    copy: "Finds marketing spam in your inbox and unsubscribes",
+    title: "Sounds Like You ",
+    copy: "Your tone, your niche -- every post feels like you wrote it yourself",
     tone: "sky",
-    icon: Mail,
+    icon: Speech,
   },
   {
-    title: "Meeting prep",
-    copy: "Researches attendees before your next meeting",
+    title: "We Remember You",
+    copy: "Your niche, your tone, your style -- set once, applied forever",
     tone: "violet",
-    icon: Workflow,
+    icon: HandCoins,
   },
 ];
 
@@ -53,7 +53,7 @@ function Header() {
       <header className="instruct-header">
         <div className="instruct-nav-left">
           <Link href="/" aria-label="Instruct home" className="instruct-logo-link">
-            <Image src="/images/instruct/avtar.png" alt="Instruct" width={100} height={32} priority />
+            <Image src="/images/instruct/avtar.png" alt="Instruct" width={30} height={30} priority />
           </Link>
           <div className="instruct-nav-links">
            
@@ -85,7 +85,7 @@ function Hero() {
         <h1>Every viral post starts here</h1>
         <p>Where viral posts are written</p>
         <div className="instruct-prompt">
-          <span>Delegate a task or ask a question...</span>
+          <span>Where viral posts are written.</span>
           <div>
             <Mic size={20} />
             <button aria-label="Submit prompt">
@@ -94,14 +94,14 @@ function Hero() {
           </div>
         </div>
         <div className="instruct-chips" aria-label="Task categories">
-          <button><Sparkles size={15} /> Featured</button>
-          <button><BarChart2 size={15} /> Productivity</button>
+          <button><ChartLine size={15} /> Viral</button>
+          <button><Shell size={15} /> Bold</button>
           <button><ImageIcon size={15} /> Creative</button>
-          <button><Heart size={15} /> Lifestyle</button>
+          <button><FastForward size={15} /> Instant</button>
         </div>
         <div id="features" className="instruct-feature-section">
           <h2>Featured</h2>
-          <p>Explore what Instruct can do</p>
+          <p>Explore what Capmax can do</p>
           <div className="instruct-feature-grid">
             {featureCards.map((card) => {
               const Icon = card.icon;
@@ -138,7 +138,7 @@ function MeetSection() {
             <span>{card.label}</span>
             <p>{card.copy}</p>
             <div>
-              <button aria-label="Add"><Sparkles size={18} /></button>
+              <button aria-label="Add"><ChartLine size={18} /></button>
               <button aria-label="Run"><ArrowRight size={18} /></button>
             </div>
           </article>
