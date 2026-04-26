@@ -56,9 +56,7 @@ function Hero() {
         <Image src="/images/instruct/background-main.webp" alt="" width={2048} height={598} priority />
       </div>
       <div className="instruct-hero-content">
-        <Link href="/auth/register" className="instruct-free-pill">
-          Get started for free <ArrowRight size={16} />
-        </Link>
+       
         <h1>Every viral post starts here</h1>
         <p>Where viral posts are written</p>
         <div className="instruct-prompt">
@@ -97,7 +95,7 @@ function Hero() {
           </div>
         </div>
       </div>
-      <a href="#meet" className="instruct-learn">Learn more</a>
+     
     </section>
   );
 }
