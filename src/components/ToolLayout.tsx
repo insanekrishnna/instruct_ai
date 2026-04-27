@@ -1,8 +1,9 @@
 'use client';
 
+import Image from 'next/image';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
-import { Settings, Home } from 'lucide-react';
+import { Settings } from 'lucide-react';
 import { useState } from 'react';
 
 interface ToolLayoutProps {
@@ -29,7 +30,13 @@ export function ToolLayout({ children, title, description }: ToolLayoutProps) {
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex items-center justify-between h-16">
             <Link href="/" className="flex items-center gap-2">
-              <img src="/images/instruct/avtar.png" alt="Instruct" className="h-8 w-auto" />
+              <Image
+                src="/images/instruct/capmax-removebg-preview.png"
+                alt="Capmax logo"
+                width={32}
+                height={32}
+                className="h-8 w-8 object-contain"
+              />
             </Link>
             <nav className="hidden sm:flex items-center gap-8">
               {TOOLS.map((tool) => (
@@ -101,7 +108,7 @@ export function ToolLayout({ children, title, description }: ToolLayoutProps) {
       <footer className="border-t border-gray-200 dark:border-gray-800 bg-gray-50 dark:bg-gray-900 mt-16">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
           <p className="text-center text-gray-600 dark:text-gray-300 text-sm">
-            © 2026 Instruct - Viral Content Generator
+            (c) 2026 Capmax AI
           </p>
         </div>
       </footer>

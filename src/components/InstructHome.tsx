@@ -3,8 +3,8 @@
 import Image from "next/image";
 import Link from "next/link";
 import { Canvas, useFrame, useThree } from "@react-three/fiber";
-import { ArrowRight, ChartLine, Earth, FastForward, ImageIcon, Mic, Shell, Speech, HandCoins, ChartScatter } from "lucide-react";
-import { useMemo, useRef } from "react";
+import { ArrowRight, ChartLine, Earth, FastForward, ImageIcon, LogIn, Mic, Moon, Shell, Speech, Sun, HandCoins, ChartScatter } from "lucide-react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import * as THREE from "three";
 
 const featureCards = [
@@ -22,7 +22,7 @@ const featureCards = [
   },
   {
     title: "Sounds Like You",
-    copy: "Your tone, your niche, your cadence. Nothing generic slips through.",
+    copy: "Your tone, your niche, your cadence. So every post feels personal.",
     tone: "sky",
     icon: Speech,
   },
@@ -154,6 +154,24 @@ function OrbScene() {
 }
 
 function Hero() {
+  const [theme, setTheme] = useState<"light" | "dark">("light");
+
+  useEffect(() => {
+    const root = document.documentElement;
+    const initialTheme = root.classList.contains("dark") ? "dark" : "light";
+    setTheme(initialTheme);
+  }, []);
+
+  useEffect(() => {
+    const root = document.documentElement;
+
+    if (theme === "dark") {
+      root.classList.add("dark");
+    } else {
+      root.classList.remove("dark");
+    }
+  }, [theme]);
+
   return (
     <section className="relative overflow-hidden bg-[#fff]">
       <div className="absolute inset-0 bg-[radial-gradient(circle_at_50%_0%,_rgba(232,242,236,0.95)_0%,_rgba(255,255,255,0.82)_34%,_rgba(255,255,255,1)_62%)]" />
@@ -161,6 +179,193 @@ function Hero() {
       <div className="absolute left-1/2 top-0 h-[25rem] w-[72rem] -translate-x-1/2 bg-[radial-gradient(ellipse_at_center,_rgba(220,239,230,0.45)_0%,_rgba(255,255,255,0)_68%)] opacity-90 blur-3xl" />
       <div className="absolute inset-x-0 top-0 h-[21rem] opacity-[0.22] [background-image:radial-gradient(rgba(13, 13, 13, 0.22)_1px,transparent_1px)] [background-size:12px_12px] [mask-image:linear-gradient(to_bottom,black,transparent_88%)]" />
 
+      <div className="absolute left-5 top-5 z-20 md:left-8 md:top-7">
+        <Link
+          href="/"
+          aria-label="Capmax home"
+          style={{
+            display: "inline-flex",
+            alignItems: "center",
+            gap: "0.5rem",
+            borderRadius: "999px",
+            padding: "1.5px",
+            background: "linear-gradient(145deg, rgba(255,255,255,0.96) 0%, rgba(255,255,255,0.28) 45%, rgba(255,255,255,0.62) 100%)",
+            boxShadow: "0 10px 30px rgba(68,80,55,0.07), 0 4px 12px rgba(0,0,0,0.03), 0 2px 0 rgba(255,255,255,1) inset",
+            backdropFilter: "blur(24px)",
+            WebkitBackdropFilter: "blur(24px)",
+            textDecoration: "none",
+            transition: "all 0.25s ease",
+          }}
+        >
+          <span
+            style={{
+              display: "inline-flex",
+              alignItems: "center",
+              gap: "0.5rem",
+              borderRadius: "999px",
+              padding: "0 0.2rem 0 0",
+              background: "linear-gradient(160deg, rgba(255,255,255,0.82) 0%, rgba(255,255,255,0.54) 50%, rgba(255,255,255,0.72) 100%)",
+              boxShadow: "0 1px 0 rgba(255,255,255,0.95) inset, 0 -1px 0 rgba(255,255,255,0.38) inset, inset 0 8px 24px rgba(255,255,255,0.50)",
+              backdropFilter: "blur(20px)",
+              WebkitBackdropFilter: "blur(20px)",
+              position: "relative",
+              overflow: "hidden",
+            }}
+          >
+            <span
+              style={{
+                position: "absolute",
+                top: 0,
+                left: "8%",
+                right: "8%",
+                height: "1.5px",
+                background: "linear-gradient(90deg, transparent, rgba(255,255,255,0.95) 30%, rgba(255,255,255,1) 50%, rgba(255,255,255,0.95) 70%, transparent)",
+                borderRadius: "0 0 50% 50%",
+                pointerEvents: "none",
+                zIndex: 10,
+              }}
+            />
+            <span
+              style={{
+                position: "absolute",
+                top: 0,
+                left: 0,
+                right: 0,
+                height: "55%",
+                background: "linear-gradient(180deg, rgba(255,255,255,0.44) 0%, rgba(255,255,255,0) 100%)",
+                borderRadius: "999px 999px 60% 60% / 20px 20px 0 0",
+                pointerEvents: "none",
+                zIndex: 9,
+              }}
+            />
+
+            <Image
+              src="/images/instruct/capmax-removebg-preview.png"
+              alt="Capmax logo"
+              width={56}
+              height={56}
+              className="relative z-10 h-[3.1rem] w-[3.1rem] object-contain"
+            />
+            <span
+              className="relative z-10 hidden pr-3 sm:inline"
+              style={{
+                fontSize: "0.86rem",
+                fontWeight: 500,
+                letterSpacing: "-0.02em",
+                color: "#18181b",
+              }}
+            >
+              Capmax
+            </span>
+          </span>
+        </Link>
+      </div>
+
+      <div className="absolute right-5 top-5 z-20 flex items-center gap-2 md:right-8 md:top-7 md:gap-3">
+        <button
+          type="button"
+          aria-label={`Switch to ${theme === "light" ? "dark" : "light"} theme`}
+          onClick={() => setTheme((current) => (current === "light" ? "dark" : "light"))}
+          style={{
+            display: "inline-flex",
+            alignItems: "center",
+            gap: "0.55rem",
+            borderRadius: "999px",
+            padding: "1.5px",
+            background: "linear-gradient(145deg, rgba(255,255,255,0.96) 0%, rgba(255,255,255,0.28) 45%, rgba(255,255,255,0.62) 100%)",
+            boxShadow: "0 10px 30px rgba(68,80,55,0.07), 0 4px 12px rgba(0,0,0,0.03), 0 2px 0 rgba(255,255,255,1) inset",
+            backdropFilter: "blur(24px)",
+            WebkitBackdropFilter: "blur(24px)",
+            transition: "all 0.25s ease",
+          }}
+        >
+          <span
+            style={{
+              display: "inline-flex",
+              alignItems: "center",
+              gap: "0.5rem",
+              borderRadius: "999px",
+              padding: "0.7rem 0.95rem",
+              background: "linear-gradient(160deg, rgba(255,255,255,0.82) 0%, rgba(255,255,255,0.54) 50%, rgba(255,255,255,0.72) 100%)",
+              boxShadow: "0 1px 0 rgba(255,255,255,0.95) inset, 0 -1px 0 rgba(255,255,255,0.38) inset, inset 0 8px 24px rgba(255,255,255,0.50)",
+              backdropFilter: "blur(20px)",
+              WebkitBackdropFilter: "blur(20px)",
+              position: "relative",
+              overflow: "hidden",
+              color: "#18181b",
+            }}
+          >
+            <span
+              style={{
+                position: "absolute",
+                top: 0,
+                left: "10%",
+                right: "10%",
+                height: "1.5px",
+                background: "linear-gradient(90deg, transparent, rgba(255,255,255,0.95) 30%, rgba(255,255,255,1) 50%, rgba(255,255,255,0.95) 70%, transparent)",
+                borderRadius: "0 0 50% 50%",
+                pointerEvents: "none",
+              }}
+            />
+            {theme === "light" ? <Moon size={16} className="relative z-10" /> : <Sun size={16} className="relative z-10" />}
+            <span className="relative z-10 hidden text-[0.84rem] font-medium sm:inline">
+              {theme === "light" ? "Dark" : "Light"}
+            </span>
+          </span>
+        </button>
+
+        <Link
+          href="/login"
+          aria-label="Log in"
+          style={{
+            display: "inline-flex",
+            alignItems: "center",
+            gap: "0.55rem",
+            borderRadius: "999px",
+            padding: "1.5px",
+            background: "linear-gradient(145deg, rgba(255,255,255,0.96) 0%, rgba(255,255,255,0.28) 45%, rgba(255,255,255,0.62) 100%)",
+            boxShadow: "0 10px 30px rgba(68,80,55,0.07), 0 4px 12px rgba(0,0,0,0.03), 0 2px 0 rgba(255,255,255,1) inset",
+            backdropFilter: "blur(24px)",
+            WebkitBackdropFilter: "blur(24px)",
+            textDecoration: "none",
+            transition: "all 0.25s ease",
+          }}
+        >
+          <span
+            style={{
+              display: "inline-flex",
+              alignItems: "center",
+              gap: "0.5rem",
+              borderRadius: "999px",
+              padding: "0.7rem 0.95rem",
+              background: "linear-gradient(160deg, rgba(255,255,255,0.82) 0%, rgba(255,255,255,0.54) 50%, rgba(255,255,255,0.72) 100%)",
+              boxShadow: "0 1px 0 rgba(255,255,255,0.95) inset, 0 -1px 0 rgba(255,255,255,0.38) inset, inset 0 8px 24px rgba(255,255,255,0.50)",
+              backdropFilter: "blur(20px)",
+              WebkitBackdropFilter: "blur(20px)",
+              position: "relative",
+              overflow: "hidden",
+              color: "#18181b",
+            }}
+          >
+            <span
+              style={{
+                position: "absolute",
+                top: 0,
+                left: "10%",
+                right: "10%",
+                height: "1.5px",
+                background: "linear-gradient(90deg, transparent, rgba(255,255,255,0.95) 30%, rgba(255,255,255,1) 50%, rgba(255,255,255,0.95) 70%, transparent)",
+                borderRadius: "0 0 50% 50%",
+                pointerEvents: "none",
+              }}
+            />
+            <LogIn size={16} className="relative z-10" />
+            <span className="relative z-10 hidden text-[0.84rem] font-medium sm:inline">
+              Login
+            </span>
+          </span>
+        </Link>
+      </div>
       <div className="relative mx-auto flex min-h-screen w-full max-w-7xl flex-col items-center px-6 pb-18 pt-14 text-center md:px-10 md:pb-20 md:pt-16">
         <div className="mb-2 md:mb-3">
           <OrbScene />
@@ -392,10 +597,10 @@ function FeatureSection() {
             className="mt-4 text-4xl leading-tight tracking-[-0.04em] text-[#444a4b] md:text-5xl"
             style={{ fontFamily: "var(--font-editorial), serif", fontWeight: 500 }}
           >
-            Quietly powerful tools for louder ideas
+          Everything <b>Capmax</b> is capable of  
           </h2>
           <p className="mt-4 text-base leading-7 text-[#6f7778] md:text-lg">
-            A minimal workflow up front, with enough depth underneath to keep the writing sharp.
+           Minimal where it should be, deep where it matters, sharp in every word.
           </p>
         </div>
 
@@ -415,7 +620,7 @@ function FeatureSection() {
                   <p className="mt-3 text-[0.98rem] leading-7 text-[#697274]">{card.copy}</p>
                 </div>
                 <div className="instruct-card-visual">
-                  <Icon size={24} />
+                  <Icon size={25} />
                 </div>
               </article>
             );
@@ -449,7 +654,7 @@ function Footer() {
     <footer className="instruct-footer">
       <div className="instruct-footer-main">
         <div>
-          <Image src="/images/instruct/icon-dark.svg" alt="Instruct logo" width={24} height={24} />
+          
           <span>Capmax</span>
           <p>(c) 2026 Capmax AI</p>
         </div>

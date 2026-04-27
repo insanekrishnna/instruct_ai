@@ -1,5 +1,6 @@
 'use client';
 
+import Image from 'next/image';
 import Link from 'next/link';
 import { ArrowRight } from 'lucide-react';
 
@@ -15,11 +16,15 @@ export default function Navbar() {
             href="/" 
             className="flex items-center gap-2.5 group flex-shrink-0"
           >
-            <div className="relative w-8 h-8 sm:w-10 sm:h-10 rounded-xl bg-gradient-to-br from-blue-600 to-blue-400 shadow-lg group-hover:shadow-blue-500/40 transition-all duration-300 flex items-center justify-center text-white font-bold text-sm">
-              AI
-            </div>
-            <span className="hidden sm:inline text-sm font-semibold text-slate-900 group-hover:text-blue-600 transition-colors">
-              Instruct
+            <Image
+              src="/images/instruct/capmax-removebg-preview.png"
+              alt="Capmax logo"
+              width={56}
+              height={56}
+              className="h-12 w-12 object-contain transition-transform duration-300 group-hover:scale-110 sm:h-14 sm:w-14"
+            />
+            <span className="hidden sm:inline text-base font-semibold text-slate-900 transition-colors group-hover:text-slate-700">
+              Capmax
             </span>
           </Link>
 

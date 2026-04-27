@@ -23,8 +23,8 @@ export const metadata: Metadata = {
   title: "Capmax AI - Make it Viral",
   description: "Where viral posts are written.",
   icons: {
-    icon: "/images/instruct/avtar.png",
-    apple: "/images/instruct/avtar.png",
+    icon: "/images/instruct/capmax-removebg-preview.png",
+    apple: "/images/instruct/capmax-removebg-preview.png",
   },
   openGraph: {
     title: "Capmax AI - Make it Viral",
