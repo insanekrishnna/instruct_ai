@@ -589,38 +589,38 @@ function Hero() {
 
 function FeatureSection() {
   return (
-    <section className="bg-[#ffffff] px-6 pb-24 md:px-10">
-      <div className="mx-auto max-w-6xl rounded-[40px] border border-white/70 bg-white/72 p-8 shadow-[0_20px_80px_rgba(48,56,52,0.06)] backdrop-blur-xl md:p-10">
+    <section className="bg-[#ffffff] px-6 pb-14 md:px-10 md:pb-16">
+      <div className="mx-auto max-w-6xl rounded-[34px] border border-white/70 bg-white/72 p-6 shadow-[0_18px_56px_rgba(48,56,52,0.05)] backdrop-blur-xl md:p-8">
         <div className="mx-auto max-w-2xl text-center">
           <p className="text-sm uppercase tracking-[0.24em] text-[#8d9792]">Featured</p>
           <h2
-            className="mt-4 text-4xl leading-tight tracking-[-0.04em] text-[#444a4b] md:text-5xl"
+            className="mt-3 text-[2rem] leading-tight tracking-[-0.04em] text-[#444a4b] md:text-[2.8rem]"
             style={{ fontFamily: "var(--font-editorial), serif", fontWeight: 500 }}
           >
           Everything <b>Capmax</b> is capable of  
           </h2>
-          <p className="mt-4 text-base leading-7 text-[#6f7778] md:text-lg">
+          <p className="mt-3 text-sm leading-6 text-[#6f7778] md:text-base">
            Minimal where it should be, deep where it matters, sharp in every word.
           </p>
         </div>
 
-        <div className="mt-10 grid gap-4 md:grid-cols-2">
+        <div className="mt-7 grid gap-3.5 md:grid-cols-2">
           {featureCards.map((card) => {
             const Icon = card.icon;
 
             return (
               <article
-                className={`instruct-feature-card is-${card.tone} min-h-[180px] rounded-[28px] border border-[rgba(20,24,28,0.06)] bg-white/88 p-7`}
+                className={`instruct-feature-card is-${card.tone} min-h-[156px] rounded-[24px] border border-[rgba(20,24,28,0.06)] bg-white/88 p-5 md:p-6`}
                 key={card.title}
               >
                 <div className="relative z-10 max-w-[270px]">
-                  <h3 className="text-[1.4rem] font-medium tracking-[-0.03em] text-[#2f3638]">
+                  <h3 className="text-[1.18rem] font-medium tracking-[-0.03em] text-[#2f3638] md:text-[1.28rem]">
                     {card.title}
                   </h3>
-                  <p className="mt-3 text-[0.98rem] leading-7 text-[#697274]">{card.copy}</p>
+                  <p className="mt-2 text-[0.92rem] leading-6 text-[#697274]">{card.copy}</p>
                 </div>
                 <div className="instruct-card-visual">
-                  <Icon size={25} />
+                  <Icon size={22} />
                 </div>
               </article>
             );
@@ -633,15 +633,15 @@ function FeatureSection() {
 
 function FinalCta() {
   return (
-    <section className="bg-[#ffffff] px-6 pb-24 pt-6 md:px-10">
-      <div className="mx-auto flex min-h-[320px] max-w-6xl flex-col items-center justify-center rounded-[40px] bg-[#eef2ee] px-8 text-center shadow-[0_20px_80px_rgba(48,56,52,0.07)]">
+    <section className="bg-[#ffffff] px-6 pb-16 pt-2 md:px-10 md:pb-20">
+      <div className="mx-auto flex min-h-[250px] max-w-6xl flex-col items-center justify-center rounded-[34px] bg-[#eef2ee] px-6 py-10 text-center shadow-[0_18px_56px_rgba(48,56,52,0.06)] md:min-h-[270px] md:px-8">
         <h2
-          className="max-w-3xl text-4xl leading-tight tracking-[-0.04em] text-[#404748] md:text-5xl"
+          className="max-w-3xl text-[2rem] leading-tight tracking-[-0.04em] text-[#404748] md:text-[2.7rem]"
           style={{ fontFamily: "var(--font-editorial), serif", fontWeight: 600 }}
         >
           The words behind every viral post
         </h2>
-        <p className="mt-4 max-w-2xl text-base leading-7 text-[#6f7778] md:text-lg">
+        <p className="mt-3 max-w-2xl text-sm leading-6 text-[#6f7778] md:text-base">
           Great ideas deserve great words. We make it bold, magnetic, and impossible to miss.
         </p>
       </div>

@@ -559,7 +559,7 @@ body {
   gap: 24px;
   max-width: 1024px;
   margin: 0 auto;
-  padding: 48px 24px;
+  padding: 32px 24px 24px;
 }
 
 .instruct-footer-main > div:first-child {
@@ -570,15 +570,15 @@ body {
 }
 
 .instruct-footer-main span {
-  font-size: 18px;
+  font-size: 16px;
   font-weight: 650;
 }
 
 .instruct-footer-main p {
   grid-column: 1 / -1;
-  margin: 8px 0 0;
+  margin: 6px 0 0;
   color: #aeb4b9;
-  font-size: 14px;
+  font-size: 13px;
 }
 
 .instruct-socials {
@@ -591,10 +591,10 @@ body {
   gap: 32px;
   max-width: 1024px;
   margin: 0 auto;
-  padding: 24px;
+  padding: 18px 24px;
   border-top: 1px solid rgba(255,255,255,.04);
   color: #aeb4b9;
-  font-size: 14px;
+  font-size: 13px;
 }
 
 @keyframes instruct-fade {
