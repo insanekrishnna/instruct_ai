@@ -175,9 +175,9 @@ function Hero() {
   return (
     <section className="relative overflow-hidden bg-[#fff]">
       <div className="absolute inset-0 bg-[radial-gradient(circle_at_50%_0%,_rgba(232,242,236,0.95)_0%,_rgba(255,255,255,0.82)_34%,_rgba(255,255,255,1)_62%)]" />
-      <div className="absolute inset-x-0 top-0 h-[30rem] bg-[radial-gradient(ellipse_at_top,_rgba(218,236,227,0.85)_0%,_rgba(236,244,240,0.54)_34%,_rgba(255,255,255,0)_74%)] blur-2xl" />
-      <div className="absolute left-1/2 top-0 h-[25rem] w-[72rem] -translate-x-1/2 bg-[radial-gradient(ellipse_at_center,_rgba(220,239,230,0.45)_0%,_rgba(255,255,255,0)_68%)] opacity-90 blur-3xl" />
-      <div className="absolute inset-x-0 top-0 h-[21rem] opacity-[0.22] [background-image:radial-gradient(rgba(13, 13, 13, 0.22)_1px,transparent_1px)] [background-size:12px_12px] [mask-image:linear-gradient(to_bottom,black,transparent_88%)]" />
+      <div className="absolute inset-x-0 top-0 h-[26rem] bg-[radial-gradient(ellipse_at_top,_rgba(218,236,227,0.85)_0%,_rgba(236,244,240,0.54)_34%,_rgba(255,255,255,0)_74%)] blur-2xl" />
+      <div className="absolute left-1/2 top-0 h-[22rem] w-[68rem] -translate-x-1/2 bg-[radial-gradient(ellipse_at_center,_rgba(220,239,230,0.45)_0%,_rgba(255,255,255,0)_68%)] opacity-90 blur-3xl" />
+      <div className="absolute inset-x-0 top-0 h-[18rem] opacity-[0.18] [background-image:radial-gradient(rgba(13, 13, 13, 0.22)_1px,transparent_1px)] [background-size:12px_12px] [mask-image:linear-gradient(to_bottom,black,transparent_88%)]" />
 
       <div className="absolute left-5 top-5 z-20 md:left-8 md:top-7">
         <Link
@@ -366,7 +366,7 @@ function Hero() {
           </span>
         </Link>
       </div>
-      <div className="relative mx-auto flex min-h-screen w-full max-w-7xl flex-col items-center px-6 pb-18 pt-14 text-center md:px-10 md:pb-20 md:pt-16">
+      <div className="relative mx-auto flex min-h-screen w-full max-w-7xl flex-col items-center justify-center px-6 pb-10 pt-10 text-center md:px-10 md:pb-12 md:pt-12">
         <div className="mb-2 md:mb-3">
           <OrbScene />
         </div>
@@ -382,11 +382,11 @@ function Hero() {
           Every viral post starts here
         </h1>
 
-        <p className="mt-3 max-w-xl text-balance text-[0.8rem] font leading-none text-[#657985] md:text-[1.65rem]">
+        <p className="mt-2 max-w-xl text-balance text-[0.8rem] font leading-none text-[#657985] md:text-[1.35rem]">
           Where viral posts are written
         </p>
 
-        <div className="mt-7 w-full max-w-[52rem] md:mt-10">
+        <div className="mt-5 w-full max-w-[48rem] md:mt-7">
   {/* Outer glass shell */}
   <div
     style={{
@@ -564,7 +564,7 @@ function Hero() {
   </div>
 </div>
 
-        <div className="mt-6 flex flex-wrap justify-center gap-3 md:mt-7">
+        <div className="mt-4 flex flex-wrap justify-center gap-2.5 md:mt-5">
           <button className="inline-flex items-center gap-2 rounded-full border border-dashed border-[#d7ddda] bg-white/68 px-5 py-1 text-[0.98rem] font-medium text-[#4e565d]">
             <ChartLine size={15} />
             Viral
