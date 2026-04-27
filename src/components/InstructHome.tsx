@@ -84,17 +84,17 @@ function ParticleOrb() {
     }
 
     const elapsed = state.clock.elapsedTime;
-    const targetX = mouse.y * 0.16;
-    const targetY = mouse.x * 0.22;
+    const targetX = mouse.y * 0.50;
+    const targetY = mouse.x * 0.50;
 
-    group.position.y = Math.sin(elapsed * 0.75) * 0.09;
+    
     group.rotation.x = THREE.MathUtils.lerp(group.rotation.x, targetX, 0.04);
     group.rotation.y = THREE.MathUtils.lerp(group.rotation.y, targetY, 0.04);
 
-    core.rotation.y += 0.0012;
-    core.rotation.z = Math.sin(elapsed * 0.26) * 0.1;
-    halo.rotation.y -= 0.0007;
-    halo.rotation.x = Math.cos(elapsed * 0.22) * 0.08;
+    core.rotation.y += 0.012;
+    core.rotation.z = Math.sin(elapsed * 0.26) * 0.3;
+    halo.rotation.y -= 0.007;
+    halo.rotation.x = Math.cos(elapsed * 0.22) * 0.5;
   });
 
   return (
@@ -111,8 +111,8 @@ function ParticleOrb() {
         <pointsMaterial
           color="#000000"
           depthWrite={false}
-          opacity={0.20}
-          size={0.015}
+          opacity={0.12}
+          size={0.020}
           sizeAttenuation
           transparent
         />
@@ -122,14 +122,14 @@ function ParticleOrb() {
           <bufferAttribute
             attach="attributes-position"
             array={coreParticles}
-            count={coreParticles.length / 3}
+            count={coreParticles.length / 1}
             itemSize={3}
           />
         </bufferGeometry>
         <pointsMaterial
           color="#000000"
           depthWrite={false}
-          opacity={0.72}
+          opacity={0.90}
           size={0.030}
           sizeAttenuation
           transparent
@@ -145,8 +145,8 @@ function OrbScene() {
       <div className="absolute inset-0 rounded-full bg-[radial-gradient(circle,_rgba(208,223,216,0.6)_0%,_rgba(247,247,244,0)_63%)] blur-3xl" />
       <div className="absolute inset-[20%] rounded-full border border-white/50 bg-white/[0.12] blur-2xl" />
       <div className="absolute inset-[30%] rounded-full bg-[radial-gradient(circle,_rgba(229,236,233,0.3)_0%,_rgba(247,247,244,0)_72%)] blur-xl" />
-      <Canvas camera={{ fov: 40, position: [0, 0, 3.7] }} dpr={[1, 2]}>
-        <ambientLight intensity={1.3} />
+      <Canvas camera={{ fov: 40, position: [0, 0, 3.5] }} dpr={[1, 8]}>
+        <ambientLight intensity={1.8} />
         <ParticleOrb />
       </Canvas>
     </div>
@@ -181,28 +181,183 @@ function Hero() {
           Where viral posts are written
         </p>
 
-        <div className="mt-7 w-full max-w-[52rem] rounded-[2rem] border border-white/100 bg-white/88 p shadow-[0_26px_80px_rgba(68,80,55,0.01),0_2px_0_rgba(255,255,255,0.9)_inset] backdrop-blur-2xl md:mt-10 md:rounded-[2.2rem]">
-          <div className="relative min-h-[8.2rem] rounded-[1.7rem] bg-white/[0.72] px-6 pb-5 pt-6 text-left shadow-[0_10px_30px_rgba(104,116,110,0.05)] md:min-h-[8.8rem] md:px-7 md:pb-6 md:pt-7">
-            <textarea
-              placeholder="Where viral posts are written."
-              className="h-16 w-full resize-none bg-transparent text-[1rem] leading-7 text-[#687073] outline-none placeholder:text-[#a0a8ab] md:h-20 md:text-[1.05rem]"
-            />
-            <div className="absolute bottom-4 right-4 flex items-center gap-2.5 md:bottom-5 md:right-5">
-              <button
-                aria-label="Voice input"
-                className="grid h-10 w-10 place-items-center rounded-full text-[#9da5aa] transition duration-300 hover:bg-[#f4f5f3] hover:text-[#737b80]"
-              >
-                <Mic size={19} />
-              </button>
-              <button
-                aria-label="Submit prompt"
-                className="grid h-12 w-12 place-items-center rounded-full bg-[#eef1ef] text-[#91999f] shadow-[0_8px_18px_rgba(146,154,158,0.18)] transition duration-300 hover:scale-[1.03] hover:bg-[#e7ebea] hover:text-[#656d74]"
-              >
-                <ArrowRight size={21} />
-              </button>
-            </div>
-          </div>
-        </div>
+        <div className="mt-7 w-full max-w-[52rem] md:mt-10">
+  {/* Outer glass shell */}
+  <div
+    style={{
+      borderRadius: "2rem",
+      padding: "1px",
+      background:
+        "linear-gradient(145deg, rgba(255,255,255,0.95) 0%, rgba(255,255,255,0.3) 40%, rgba(255,255,255,0.6) 100%)",
+      boxShadow:
+        "0 32px 64px rgba(68, 80, 55, 0.08), 0 8px 24px rgba(0,0,0,0.04), 0 2px 0 rgba(255,255,255,1) inset",
+      backdropFilter: "blur(24px)",
+      WebkitBackdropFilter: "blur(24px)",
+    }}
+  >
+    {/* Inner glass surface */}
+    <div
+      style={{
+        borderRadius: "calc(2rem - 1.5px)",
+        background:
+          "linear-gradient(160deg, rgba(255,255,255,0.82) 0%, rgba(255,255,255,0.54) 50%, rgba(255,255,255,0.72) 100%)",
+        boxShadow:
+          "0 1px 0 rgba(255,255,255,0.95) inset, 0 -1px 0 rgba(255,255,255,0.4) inset, inset 0 10px 30px rgba(255,255,255,0.5), 0 10px 30px rgba(104,116,110,0.04)",
+        backdropFilter: "blur(20px)",
+        WebkitBackdropFilter: "blur(20px)",
+        position: "relative",
+        overflow: "hidden",
+        minHeight: "8.2rem",
+        padding: "1.5rem 1.5rem 1.25rem 1.5rem",
+      }}
+    >
+      {/* Specular highlight strip — top edge glint */}
+      <div
+        style={{
+          position: "absolute",
+          top: 0,
+          left: "8%",
+          right: "8%",
+          height: "1.5px",
+          background:
+            "linear-gradient(90deg, transparent, rgba(255,255,255,0.95) 30%, rgba(255,255,255,1) 50%, rgba(255,255,255,0.95) 70%, transparent)",
+          borderRadius: "0 0 50% 50%",
+          pointerEvents: "none",
+        }}
+      />
+
+      {/* Glossy upper sheen */}
+      <div
+        style={{
+          position: "absolute",
+          top: 0,
+          left: 0,
+          right: 0,
+          height: "45%",
+          background:
+            "linear-gradient(180deg, rgba(255,255,255,0.45) 0%, rgba(255,255,255,0.0) 100%)",
+          borderRadius: "calc(2rem - 1.5px) calc(2rem - 1.5px) 60% 60% / 30px 30px 0 0",
+          pointerEvents: "none",
+        }}
+      />
+
+      {/* Inner glow — bottom shadow to give depth */}
+      <div
+        style={{
+          position: "absolute",
+          bottom: 0,
+          left: 0,
+          right: 0,
+          height: "40%",
+          background:
+            "linear-gradient(0deg, rgba(233, 233, 233, 0.12) 0%, transparent 100%)",
+          borderRadius: "0 0 calc(2rem - 1.5px) calc(2rem - 1.5px)",
+          pointerEvents: "none",
+        }}
+      />
+
+      {/* Textarea */}
+      <textarea
+        placeholder="Where viral posts are written"
+        style={{
+          position: "relative",
+          zIndex: 1,
+          width: "100%",
+          resize: "none",
+          background: "transparent",
+          border: "none",
+          outline: "none",
+          fontSize: "1.05rem",
+          lineHeight: "1.3rem",
+          color: "#1e1d1d",
+          height: "4rem",
+        }}
+        className="placeholder:text-[#b0b8bb]"
+      />
+
+      {/* Action buttons */}
+      <div
+        style={{
+          position: "absolute",
+          bottom: "1.1rem",
+          right: "1.1rem",
+          zIndex: 2,
+          display: "flex",
+          alignItems: "center",
+          gap: "0.6rem",
+        }}
+      >
+        {/* Mic button — glass pill */}
+        <button
+          aria-label="Voice input"
+          style={{
+            width: "2.5rem",
+            height: "2.5rem",
+            borderRadius: "50%",
+            display: "grid",
+            placeItems: "center",
+            background:
+              "linear-gradient(145deg, rgba(255,255,255,0.7), rgba(255,255,255,0.3))",
+            border: "1px solid rgba(255,255,255,0.8)",
+            boxShadow:
+              "0 4px 12px rgba(0,0,0,0.06), 0 1px 0 rgba(255,255,255,0.9) inset",
+            color: "#9da5aa",
+            cursor: "pointer",
+            transition: "all 0.25s ease",
+            backdropFilter: "blur(8px)",
+          }}
+          onMouseEnter={e => {
+            (e.currentTarget as HTMLButtonElement).style.background =
+              "linear-gradient(145deg, rgba(255,255,255,0.9), rgba(255,255,255,0.5))";
+            (e.currentTarget as HTMLButtonElement).style.color = "#6a7478";
+          }}
+          onMouseLeave={e => {
+            (e.currentTarget as HTMLButtonElement).style.background =
+              "linear-gradient(145deg, rgba(255,255,255,0.7), rgba(255,255,255,0.3))";
+            (e.currentTarget as HTMLButtonElement).style.color = "#9da5aa";
+          }}
+        >
+          <Mic size={17} />
+        </button>
+
+        {/* Submit button — frosted glass pill with glow */}
+        <button
+          aria-label="Submit prompt"
+          style={{
+            width: "3rem",
+            height: "3rem",
+            borderRadius: "50%",
+            display: "grid",
+            placeItems: "center",
+            background:
+              "linear-gradient(145deg, rgba(255,255,255,0.85) 0%, rgba(230,236,233,0.7) 100%)",
+            border: "1px solid rgba(255,255,255,0.9)",
+            boxShadow:
+              "0 8px 24px rgba(100,120,110,0.15), 0 2px 0 rgba(255,255,255,1) inset, 0 -1px 0 rgba(180,190,185,0.3) inset",
+            color: "#7a8a8f",
+            cursor: "pointer",
+            transition: "all 0.28s cubic-bezier(0.34,1.56,0.64,1)",
+            backdropFilter: "blur(12px)",
+          }}
+          onMouseEnter={e => {
+            (e.currentTarget as HTMLButtonElement).style.transform = "scale(1.06)";
+            (e.currentTarget as HTMLButtonElement).style.boxShadow =
+              "0 12px 32px rgba(100,120,110,0.22), 0 2px 0 rgba(255,255,255,1) inset, 0 -1px 0 rgba(180,190,185,0.3) inset";
+            (e.currentTarget as HTMLButtonElement).style.color = "#4a5a60";
+          }}
+          onMouseLeave={e => {
+            (e.currentTarget as HTMLButtonElement).style.transform = "scale(1)";
+            (e.currentTarget as HTMLButtonElement).style.boxShadow =
+              "0 8px 24px rgba(100,120,110,0.15), 0 2px 0 rgba(255,255,255,1) inset, 0 -1px 0 rgba(180,190,185,0.3) inset";
+            (e.currentTarget as HTMLButtonElement).style.color = "#7a8a8f";
+          }}
+        >
+          <ArrowRight size={19} />
+        </button>
+      </div>
+    </div>
+  </div>
+</div>
 
         <div className="mt-6 flex flex-wrap justify-center gap-2.5 md:mt-7">
           <button className="inline-flex items-center gap-2 rounded-full border border-[#d9dfdc] bg-white/92 px-5 py-2.5 text-[0.98rem] font-medium text-[#474f56] shadow-[0_12px_24px_rgba(58,68,64,0.05)]">
@@ -229,7 +384,7 @@ function Hero() {
 
 function FeatureSection() {
   return (
-    <section className="bg-[#f7f7f4] px-6 pb-24 md:px-10">
+    <section className="bg-[#ffffff] px-6 pb-24 md:px-10">
       <div className="mx-auto max-w-6xl rounded-[40px] border border-white/70 bg-white/72 p-8 shadow-[0_20px_80px_rgba(48,56,52,0.06)] backdrop-blur-xl md:p-10">
         <div className="mx-auto max-w-2xl text-center">
           <p className="text-sm uppercase tracking-[0.24em] text-[#8d9792]">Featured</p>
@@ -273,11 +428,11 @@ function FeatureSection() {
 
 function FinalCta() {
   return (
-    <section className="bg-[#f7f7f4] px-6 pb-24 pt-6 md:px-10">
+    <section className="bg-[#ffffff] px-6 pb-24 pt-6 md:px-10">
       <div className="mx-auto flex min-h-[320px] max-w-6xl flex-col items-center justify-center rounded-[40px] bg-[#eef2ee] px-8 text-center shadow-[0_20px_80px_rgba(48,56,52,0.07)]">
         <h2
           className="max-w-3xl text-4xl leading-tight tracking-[-0.04em] text-[#404748] md:text-5xl"
-          style={{ fontFamily: "var(--font-editorial), serif", fontWeight: 500 }}
+          style={{ fontFamily: "var(--font-editorial), serif", fontWeight: 600 }}
         >
           The words behind every viral post
         </h2>
@@ -295,8 +450,8 @@ function Footer() {
       <div className="instruct-footer-main">
         <div>
           <Image src="/images/instruct/icon-dark.svg" alt="Instruct logo" width={24} height={24} />
-          <span>Instruct</span>
-          <p>(c) 2026 Instruct Technologies Inc.</p>
+          <span>Capmax</span>
+          <p>(c) 2026 Capmax AI</p>
         </div>
         <div className="instruct-socials">
           <Link href="https://x.com/InstructHQ">
@@ -308,8 +463,8 @@ function Footer() {
         </div>
       </div>
       <div className="instruct-footer-legal">
-        <Link href="https://legal.instruct.ai/eula">Terms</Link>
-        <Link href="https://legal.instruct.ai/privacy">Privacy Policy</Link>
+        <Link href="">Terms</Link>
+        <Link href="">Privacy Policy</Link>
       </div>
     </footer>
   );
