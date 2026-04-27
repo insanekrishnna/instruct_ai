@@ -36,15 +36,33 @@ const featureCards = [
 
 function ParticleOrb() {
   const groupRef = useRef<THREE.Group>(null);
-  const pointsRef = useRef<THREE.Points>(null);
+  const coreRef = useRef<THREE.Points>(null);
+  const haloRef = useRef<THREE.Points>(null);
   const { mouse } = useThree();
 
-  const particles = useMemo(() => {
-    const count = 1800;
+  const coreParticles = useMemo(() => {
+    const count = 2200;
     const positions = new Float32Array(count * 3);
 
     for (let index = 0; index < count; index += 1) {
-      const radius = 0.88 + Math.random() * 0.22;
+      const radius = 0.78 + Math.random() * 0.26;
+      const theta = Math.random() * Math.PI * 2;
+      const phi = Math.acos(2 * Math.random() - 1);
+
+      positions[index * 3] = radius * Math.sin(phi) * Math.cos(theta);
+      positions[index * 3 + 1] = radius * Math.sin(phi) * Math.sin(theta);
+      positions[index * 3 + 2] = radius * Math.cos(phi);
+    }
+
+    return positions;
+  }, []);
+
+  const haloParticles = useMemo(() => {
+    const count = 1200;
+    const positions = new Float32Array(count * 3);
+
+    for (let index = 0; index < count; index += 1) {
+      const radius = 1.02 + Math.random() * 0.18;
       const theta = Math.random() * Math.PI * 2;
       const phi = Math.acos(2 * Math.random() - 1);
 
@@ -58,40 +76,61 @@ function ParticleOrb() {
 
   useFrame((state) => {
     const group = groupRef.current;
-    const points = pointsRef.current;
+    const core = coreRef.current;
+    const halo = haloRef.current;
 
-    if (!group || !points) {
+    if (!group || !core || !halo) {
       return;
     }
 
     const elapsed = state.clock.elapsedTime;
-    const targetX = mouse.y * 0.12;
-    const targetY = mouse.x * 0.18;
+    const targetX = mouse.y * 0.16;
+    const targetY = mouse.x * 0.22;
 
-    group.position.y = Math.sin(elapsed * 0.7) * 0.08;
-    group.rotation.x = THREE.MathUtils.lerp(group.rotation.x, targetX, 0.045);
-    group.rotation.y = THREE.MathUtils.lerp(group.rotation.y, targetY, 0.045);
+    group.position.y = Math.sin(elapsed * 0.75) * 0.09;
+    group.rotation.x = THREE.MathUtils.lerp(group.rotation.x, targetX, 0.04);
+    group.rotation.y = THREE.MathUtils.lerp(group.rotation.y, targetY, 0.04);
 
-    points.rotation.y += 0.0014;
-    points.rotation.z = Math.sin(elapsed * 0.35) * 0.08;
+    core.rotation.y += 0.0012;
+    core.rotation.z = Math.sin(elapsed * 0.26) * 0.1;
+    halo.rotation.y -= 0.0007;
+    halo.rotation.x = Math.cos(elapsed * 0.22) * 0.08;
   });
 
   return (
     <group ref={groupRef}>
-      <points ref={pointsRef}>
+      <points ref={haloRef}>
         <bufferGeometry>
           <bufferAttribute
             attach="attributes-position"
-            array={particles}
-            count={particles.length / 3}
+            array={haloParticles}
+            count={haloParticles.length / 3}
             itemSize={3}
           />
         </bufferGeometry>
         <pointsMaterial
-          color="#bcc9c0"
+          color="#000000"
           depthWrite={false}
-          opacity={0.68}
-          size={0.016}
+          opacity={0.20}
+          size={0.015}
+          sizeAttenuation
+          transparent
+        />
+      </points>
+      <points ref={coreRef}>
+        <bufferGeometry>
+          <bufferAttribute
+            attach="attributes-position"
+            array={coreParticles}
+            count={coreParticles.length / 3}
+            itemSize={3}
+          />
+        </bufferGeometry>
+        <pointsMaterial
+          color="#000000"
+          depthWrite={false}
+          opacity={0.72}
+          size={0.030}
           sizeAttenuation
           transparent
         />
@@ -102,11 +141,12 @@ function ParticleOrb() {
 
 function OrbScene() {
   return (
-    <div className="relative h-[160px] w-[160px] md:h-[190px] md:w-[190px]">
-      <div className="absolute inset-6 rounded-full bg-[radial-gradient(circle,_rgba(216,233,224,0.85)_0%,_rgba(248,248,246,0)_72%)] blur-2xl" />
-      <div className="absolute inset-10 rounded-full border border-white/60 bg-white/30 blur-xl" />
-      <Canvas camera={{ fov: 42, position: [0, 0, 3.3] }} dpr={[1, 1.8]}>
-        <ambientLight intensity={1.2} />
+    <div className="relative h-[140px] w-[140px] md:h-[176px] md:w-[176px]">
+      <div className="absolute inset-0 rounded-full bg-[radial-gradient(circle,_rgba(208,223,216,0.6)_0%,_rgba(247,247,244,0)_63%)] blur-3xl" />
+      <div className="absolute inset-[20%] rounded-full border border-white/50 bg-white/[0.12] blur-2xl" />
+      <div className="absolute inset-[30%] rounded-full bg-[radial-gradient(circle,_rgba(229,236,233,0.3)_0%,_rgba(247,247,244,0)_72%)] blur-xl" />
+      <Canvas camera={{ fov: 40, position: [0, 0, 3.7] }} dpr={[1, 2]}>
+        <ambientLight intensity={1.3} />
         <ParticleOrb />
       </Canvas>
     </div>
@@ -116,56 +156,68 @@ function OrbScene() {
 function Hero() {
   return (
     <section className="relative overflow-hidden bg-[#f7f7f4]">
-      <div className="absolute inset-x-0 top-0 h-[380px] bg-[radial-gradient(circle_at_top,_rgba(224,239,229,0.95)_0%,_rgba(247,247,244,0)_68%)] opacity-90" />
-      <div className="absolute left-1/2 top-24 h-56 w-56 -translate-x-1/2 rounded-full bg-[radial-gradient(circle,_rgba(215,229,220,0.78)_0%,_rgba(247,247,244,0)_72%)] blur-3xl" />
+      <div className="absolute inset-0 bg-[radial-gradient(circle_at_50%_0%,_rgba(232,242,236,0.95)_0%,_rgba(247,247,244,0.82)_34%,_rgba(247,247,244,1)_62%)]" />
+      <div className="absolute inset-x-0 top-0 h-[30rem] bg-[radial-gradient(ellipse_at_top,_rgba(218,236,227,0.85)_0%,_rgba(236,244,240,0.54)_34%,_rgba(247,247,244,0)_74%)] blur-2xl" />
+      <div className="absolute left-1/2 top-0 h-[25rem] w-[72rem] -translate-x-1/2 bg-[radial-gradient(ellipse_at_center,_rgba(220,239,230,0.45)_0%,_rgba(247,247,244,0)_68%)] opacity-90 blur-3xl" />
+      <div className="absolute inset-x-0 top-0 h-[21rem] opacity-[0.22] [background-image:radial-gradient(rgba(13, 13, 13, 0.22)_1px,transparent_1px)] [background-size:12px_12px] [mask-image:linear-gradient(to_bottom,black,transparent_88%)]" />
 
-      <div className="relative mx-auto flex min-h-screen w-full max-w-6xl flex-col items-center px-6 pb-20 pt-28 text-center md:px-10 md:pb-24 md:pt-36">
-        <div className="mb-8 md:mb-10">
+      <div className="relative mx-auto flex min-h-screen w-full max-w-7xl flex-col items-center px-6 pb-18 pt-14 text-center md:px-10 md:pb-20 md:pt-16">
+        <div className="mb-2 md:mb-3">
           <OrbScene />
         </div>
 
         <h1
-          className="max-w-4xl text-[3rem] leading-[0.98] tracking-[-0.05em] text-[#454b4c] md:text-[5.5rem]"
-          style={{ fontFamily: "var(--font-editorial), serif", fontWeight: 500 }}
+          className="max-w-[20ch] text-[2rem] leading-[0.96] tracking-[-0.045em] text-[#000000] md:text-[5.15rem]"
+          style={{
+            fontFamily: "var(--font-editorial), serif",
+            fontWeight: 550,
+            textShadow: "0 1px 0 rgba(0, 0, 0, 0.72)",
+          }}
         >
           Every viral post starts here
         </h1>
 
-        <p className="mt-5 max-w-2xl text-balance text-lg text-[#727a7a] md:text-[1.65rem]">
+        <p className="mt-3 max-w-xl text-balance text-[0.8rem] font leading-none text-[#657985] md:text-[1.65rem]">
           Where viral posts are written
         </p>
 
-        <div className="mt-12 w-full max-w-4xl rounded-[32px] border border-white/80 bg-white/88 p-4 shadow-[0_18px_60px_rgba(51,62,56,0.08)] backdrop-blur-xl md:p-5">
-          <div className="flex items-center gap-3 rounded-[24px] bg-[#fcfcfa] px-4 py-3 md:px-5 md:py-4">
-            <Mic className="hidden text-[#a1a9a5] md:block" size={20} />
-            <input
-              type="text"
+        <div className="mt-7 w-full max-w-[52rem] rounded-[2rem] border border-white/100 bg-white/88 p shadow-[0_26px_80px_rgba(68,80,55,0.01),0_2px_0_rgba(255,255,255,0.9)_inset] backdrop-blur-2xl md:mt-10 md:rounded-[2.2rem]">
+          <div className="relative min-h-[8.2rem] rounded-[1.7rem] bg-white/[0.72] px-6 pb-5 pt-6 text-left shadow-[0_10px_30px_rgba(104,116,110,0.05)] md:min-h-[8.8rem] md:px-7 md:pb-6 md:pt-7">
+            <textarea
               placeholder="Where viral posts are written."
-              className="w-full bg-transparent text-lg text-[#697172] outline-none placeholder:text-[#a6aeab] md:text-2xl"
+              className="h-16 w-full resize-none bg-transparent text-[1rem] leading-7 text-[#687073] outline-none placeholder:text-[#a0a8ab] md:h-20 md:text-[1.05rem]"
             />
-            <button
-              aria-label="Submit prompt"
-              className="grid h-12 w-12 shrink-0 place-items-center rounded-full bg-[#edf1ee] text-[#656d6d] transition duration-300 hover:scale-[1.03] hover:bg-[#e4ebe6]"
-            >
-              <ArrowRight size={20} />
-            </button>
+            <div className="absolute bottom-4 right-4 flex items-center gap-2.5 md:bottom-5 md:right-5">
+              <button
+                aria-label="Voice input"
+                className="grid h-10 w-10 place-items-center rounded-full text-[#9da5aa] transition duration-300 hover:bg-[#f4f5f3] hover:text-[#737b80]"
+              >
+                <Mic size={19} />
+              </button>
+              <button
+                aria-label="Submit prompt"
+                className="grid h-12 w-12 place-items-center rounded-full bg-[#eef1ef] text-[#91999f] shadow-[0_8px_18px_rgba(146,154,158,0.18)] transition duration-300 hover:scale-[1.03] hover:bg-[#e7ebea] hover:text-[#656d74]"
+              >
+                <ArrowRight size={21} />
+              </button>
+            </div>
           </div>
         </div>
 
-        <div className="mt-8 flex flex-wrap justify-center gap-3">
-          <button className="inline-flex items-center gap-2 rounded-full border border-[#dfe5e1] bg-white/75 px-5 py-2.5 text-sm font-medium text-[#50595a] shadow-[0_4px_18px_rgba(48,56,52,0.04)]">
+        <div className="mt-6 flex flex-wrap justify-center gap-2.5 md:mt-7">
+          <button className="inline-flex items-center gap-2 rounded-full border border-[#d9dfdc] bg-white/92 px-5 py-2.5 text-[0.98rem] font-medium text-[#474f56] shadow-[0_12px_24px_rgba(58,68,64,0.05)]">
             <ChartLine size={15} />
             Viral
           </button>
-          <button className="inline-flex items-center gap-2 rounded-full border border-[#e4e8e5] bg-white/70 px-5 py-2.5 text-sm font-medium text-[#5b6364]">
+          <button className="inline-flex items-center gap-2 rounded-full border border-dashed border-[#d7ddda] bg-white/68 px-5 py-2.5 text-[0.98rem] font-medium text-[#4e565d]">
             <Shell size={15} />
             Bold
           </button>
-          <button className="inline-flex items-center gap-2 rounded-full border border-[#e4e8e5] bg-white/70 px-5 py-2.5 text-sm font-medium text-[#5b6364]">
+          <button className="inline-flex items-center gap-2 rounded-full border border-dashed border-[#d7ddda] bg-white/68 px-5 py-2.5 text-[0.98rem] font-medium text-[#4e565d]">
             <ImageIcon size={15} />
             Creative
           </button>
-          <button className="inline-flex items-center gap-2 rounded-full border border-[#e4e8e5] bg-white/70 px-5 py-2.5 text-sm font-medium text-[#5b6364]">
+          <button className="inline-flex items-center gap-2 rounded-full border border-dashed border-[#d7ddda] bg-white/68 px-5 py-2.5 text-[0.98rem] font-medium text-[#4e565d]">
             <FastForward size={15} />
             Instant
           </button>
