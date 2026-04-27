@@ -142,9 +142,9 @@ function ParticleOrb() {
 function OrbScene() {
   return (
     <div className="relative h-[140px] w-[140px] md:h-[176px] md:w-[176px]">
-      <div className="absolute inset-0 rounded-full bg-[radial-gradient(circle,_rgba(208,223,216,0.6)_0%,_rgba(247,247,244,0)_63%)] blur-3xl" />
+      <div className="absolute inset-0 rounded-full bg-[radial-gradient(circle,_rgba(208,223,216,0.6)_0%,_rgba(255,255,255,0)_63%)] blur-3xl" />
       <div className="absolute inset-[20%] rounded-full border border-white/50 bg-white/[0.12] blur-2xl" />
-      <div className="absolute inset-[30%] rounded-full bg-[radial-gradient(circle,_rgba(229,236,233,0.3)_0%,_rgba(247,247,244,0)_72%)] blur-xl" />
+      <div className="absolute inset-[30%] rounded-full bg-[radial-gradient(circle,_rgba(229,236,233,0.3)_0%,_rgba(255,255,255,0)_72%)] blur-xl" />
       <Canvas camera={{ fov: 40, position: [0, 0, 3.5] }} dpr={[1, 8]}>
         <ambientLight intensity={1.8} />
         <ParticleOrb />
@@ -155,10 +155,10 @@ function OrbScene() {
 
 function Hero() {
   return (
-    <section className="relative overflow-hidden bg-[#f7f7f4]">
-      <div className="absolute inset-0 bg-[radial-gradient(circle_at_50%_0%,_rgba(232,242,236,0.95)_0%,_rgba(247,247,244,0.82)_34%,_rgba(247,247,244,1)_62%)]" />
-      <div className="absolute inset-x-0 top-0 h-[30rem] bg-[radial-gradient(ellipse_at_top,_rgba(218,236,227,0.85)_0%,_rgba(236,244,240,0.54)_34%,_rgba(247,247,244,0)_74%)] blur-2xl" />
-      <div className="absolute left-1/2 top-0 h-[25rem] w-[72rem] -translate-x-1/2 bg-[radial-gradient(ellipse_at_center,_rgba(220,239,230,0.45)_0%,_rgba(247,247,244,0)_68%)] opacity-90 blur-3xl" />
+    <section className="relative overflow-hidden bg-[#fff]">
+      <div className="absolute inset-0 bg-[radial-gradient(circle_at_50%_0%,_rgba(232,242,236,0.95)_0%,_rgba(255,255,255,0.82)_34%,_rgba(255,255,255,1)_62%)]" />
+      <div className="absolute inset-x-0 top-0 h-[30rem] bg-[radial-gradient(ellipse_at_top,_rgba(218,236,227,0.85)_0%,_rgba(236,244,240,0.54)_34%,_rgba(255,255,255,0)_74%)] blur-2xl" />
+      <div className="absolute left-1/2 top-0 h-[25rem] w-[72rem] -translate-x-1/2 bg-[radial-gradient(ellipse_at_center,_rgba(220,239,230,0.45)_0%,_rgba(255,255,255,0)_68%)] opacity-90 blur-3xl" />
       <div className="absolute inset-x-0 top-0 h-[21rem] opacity-[0.22] [background-image:radial-gradient(rgba(13, 13, 13, 0.22)_1px,transparent_1px)] [background-size:12px_12px] [mask-image:linear-gradient(to_bottom,black,transparent_88%)]" />
 
       <div className="relative mx-auto flex min-h-screen w-full max-w-7xl flex-col items-center px-6 pb-18 pt-14 text-center md:px-10 md:pb-20 md:pt-16">
@@ -359,8 +359,8 @@ function Hero() {
   </div>
 </div>
 
-        <div className="mt-6 flex flex-wrap justify-center gap-2.5 md:mt-7">
-          <button className="inline-flex items-center gap-2 rounded-full border border-[#d9dfdc] bg-white/92 px-5 py-2.5 text-[0.98rem] font-medium text-[#474f56] shadow-[0_12px_24px_rgba(58,68,64,0.05)]">
+        <div className="mt-6 flex flex-wrap justify-center gap-3 md:mt-7">
+          <button className="inline-flex items-center gap-2 rounded-full border border-dashed border-[#d7ddda] bg-white/68 px-5 py-1 text-[0.98rem] font-medium text-[#4e565d]">
             <ChartLine size={15} />
             Viral
           </button>
