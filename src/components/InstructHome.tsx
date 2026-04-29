@@ -159,9 +159,10 @@ function OrbScene() {
 
 function Hero() {
   const [theme, setTheme] = useState<"light" | "dark">("light");
+  const [isMobile, setIsMobile] = useState(false);
   const [selectedPlatform, setSelectedPlatform] = useState<(typeof PLATFORM_OPTIONS)[number]>("Instagram");
   const [selectedStyle, setSelectedStyle] = useState<(typeof STYLE_OPTIONS)[number]>("Minimal");
-  const [selectedWordLimit, setSelectedWordLimit] = useState<(typeof WORD_OPTIONS)[number]>("In 50 words");
+  const [selectedWordLimit, setSelectedWordLimit] = useState<(typeof WORD_OPTIONS)[number]>("300 words");
   const [isPlatformMenuOpen, setIsPlatformMenuOpen] = useState(false);
   const [isStyleMenuOpen, setIsStyleMenuOpen] = useState(false);
   const [isWordMenuOpen, setIsWordMenuOpen] = useState(false);
@@ -170,6 +171,18 @@ function Hero() {
     const root = document.documentElement;
     const initialTheme = root.classList.contains("dark") ? "dark" : "light";
     setTheme(initialTheme);
+  }, []);
+
+  useEffect(() => {
+    const mediaQuery = window.matchMedia("(max-width: 639px)");
+    const syncMobileState = () => setIsMobile(mediaQuery.matches);
+
+    syncMobileState();
+    mediaQuery.addEventListener("change", syncMobileState);
+
+    return () => {
+      mediaQuery.removeEventListener("change", syncMobileState);
+    };
   }, []);
 
   useEffect(() => {
@@ -199,6 +212,8 @@ function Hero() {
       document.removeEventListener("mousedown", handlePointerDown);
     };
   }, []);
+
+  const mobileWordLimitLabel = selectedWordLimit.replace(" words", "w");
 
   return (
     <section className="relative overflow-hidden bg-[#fff]">
@@ -519,9 +534,9 @@ function Hero() {
           zIndex: 9998,
           display: "flex",
           alignItems: "center",
-          gap: "0.65rem",
-          flexWrap: "wrap",
-          maxWidth: "calc(100% - 8rem)",
+          gap: isMobile ? "0.35rem" : "0.65rem",
+          flexWrap: "nowrap",
+          maxWidth: isMobile ? "calc(100% - 6.2rem)" : "calc(100% - 8rem)",
         }}
       >
         <div style={{ position: "relative" }}>
@@ -540,7 +555,7 @@ function Hero() {
               display: "inline-flex",
               alignItems: "center",
               gap: "0.4rem",
-              padding: "0.38rem 0.65rem",
+              padding: isMobile ? "0.34rem 0.45rem" : "0.38rem 0.65rem",
               background: "linear-gradient(145deg, rgba(255,255,255,0.7), rgba(255,255,255,0.3))",
               border: "1px solid rgba(255,255,255,0.8)",
               boxShadow: "0 4px 12px rgba(39, 36, 36, 0.0), 0 1px 0 rgba(255,255,255,0.9) inset",
@@ -549,8 +564,9 @@ function Hero() {
               transition: "all 0.25s ease",
               backdropFilter: "blur(8px)",
               WebkitBackdropFilter: "blur(8px)",
-              fontSize: "0.72rem",
+              fontSize: isMobile ? "0.66rem" : "0.72rem",
               fontWeight: 500,
+              flexShrink: 0,
             }}
           >
             <span>{selectedPlatform}</span>
@@ -621,7 +637,7 @@ function Hero() {
               display: "inline-flex",
               alignItems: "center",
               gap: "0.4rem",
-              padding: "0.38rem 0.65rem",
+              padding: isMobile ? "0.34rem 0.45rem" : "0.38rem 0.65rem",
               background: "linear-gradient(145deg, rgba(255,255,255,0.7), rgba(255,255,255,0.3))",
               border: "1px solid rgba(255,255,255,0.8)",
               boxShadow: "0 4px 12px rgba(39, 36, 36, 0.0), 0 1px 0 rgba(255,255,255,0.9) inset",
@@ -630,8 +646,9 @@ function Hero() {
               transition: "all 0.25s ease",
               backdropFilter: "blur(8px)",
               WebkitBackdropFilter: "blur(8px)",
-              fontSize: "0.72rem",
+              fontSize: isMobile ? "0.66rem" : "0.72rem",
               fontWeight: 500,
+              flexShrink: 0,
             }}
           >
             <span>{selectedStyle}</span>
@@ -702,7 +719,7 @@ function Hero() {
               display: "inline-flex",
               alignItems: "center",
               gap: "0.4rem",
-              padding: "0.38rem 0.65rem",
+              padding: isMobile ? "0.34rem 0.45rem" : "0.38rem 0.65rem",
               background: "linear-gradient(145deg, rgba(255,255,255,0.7), rgba(255,255,255,0.3))",
               border: "1px solid rgba(255,255,255,0.8)",
               boxShadow: "0 4px 12px rgba(0,0,0,0.06), 0 1px 0 rgba(255,255,255,0.9) inset",
@@ -711,11 +728,12 @@ function Hero() {
               transition: "all 0.25s ease",
               backdropFilter: "blur(8px)",
               WebkitBackdropFilter: "blur(8px)",
-              fontSize: "0.72rem",
+              fontSize: isMobile ? "0.66rem" : "0.72rem",
               fontWeight: 500,
+              flexShrink: 0,
             }}
           >
-            <span>{selectedWordLimit}</span>
+            <span>{isMobile ? mobileWordLimitLabel : selectedWordLimit}</span>
             <ChevronDown size={11} style={{ transform: isWordMenuOpen ? "rotate(180deg)" : "rotate(0deg)", transition: "transform 0.2s ease" }} />
           </button>
 
