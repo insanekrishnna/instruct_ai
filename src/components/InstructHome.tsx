@@ -512,7 +512,7 @@ function Hero() {
           position: "absolute",
           bottom: "1rem",
           left: "1rem",
-          zIndex: 2,
+          zIndex: 9998,
           display: "flex",
           alignItems: "center",
           gap: "0.65rem",
@@ -558,14 +558,14 @@ function Hero() {
               style={{
                 position: "absolute",
                 left: 0,
-                top: "calc(100% + 0.6rem)",
+                top: "calc(100% + 0.35rem)",
                 minWidth: "8.4rem",
-                padding: "0.3rem",
+                padding: "0.2rem",
                 borderRadius: "0.7rem",
                 background: "linear-gradient(160deg, rgba(255,255,255,0.98) 0%, rgba(250,251,250,0.97) 55%, rgba(245,247,246,0.98) 100%)",
                 border: "1px solid rgba(229,233,230,0.95)",
                 boxShadow: "0 18px 34px rgba(100,120,110,0.18), 0 1px 0 rgba(255,255,255,0.98) inset",
-                zIndex: 30,
+                zIndex: 9999,
               }}
             >
               {PLATFORM_OPTIONS.map((option) => (
@@ -583,7 +583,7 @@ function Hero() {
                     alignItems: "center",
                     justifyContent: "space-between",
                     borderRadius: "0.56rem",
-                    padding: "0.5rem 0.56rem",
+                    padding: "0.34rem 0.48rem",
                     border: "none",
                     background: option === selectedPlatform ? "rgba(255,255,255,0.55)" : "transparent",
                     color: "#4e565d",
@@ -638,14 +638,14 @@ function Hero() {
               style={{
                 position: "absolute",
                 left: 0,
-                top: "calc(100% + 0.6rem)",
+                top: "calc(100% + 0.35rem)",
                 minWidth: "8.4rem",
-                padding: "0.3rem",
+                padding: "0.2rem",
                 borderRadius: "0.7rem",
                 background: "linear-gradient(160deg, rgba(255,255,255,0.98) 0%, rgba(250,251,250,0.97) 55%, rgba(245,247,246,0.98) 100%)",
                 border: "1px solid rgba(229,233,230,0.95)",
                 boxShadow: "0 18px 34px rgba(100,120,110,0.18), 0 1px 0 rgba(255,255,255,0.98) inset",
-                zIndex: 30,
+                zIndex: 9999,
               }}
             >
               {STYLE_OPTIONS.map((option) => (
@@ -663,7 +663,7 @@ function Hero() {
                     alignItems: "center",
                     justifyContent: "space-between",
                     borderRadius: "0.56rem",
-                    padding: "0.5rem 0.56rem",
+                    padding: "0.34rem 0.48rem",
                     border: "none",
                     background: option === selectedStyle ? "rgba(255,255,255,0.55)" : "transparent",
                     color: "#4e565d",
