@@ -562,11 +562,10 @@ function Hero() {
                 minWidth: "12rem",
                 padding: "0.45rem",
                 borderRadius: "1rem",
-                background: "linear-gradient(160deg, rgba(255,255,255,0.84) 0%, rgba(255,255,255,0.58) 55%, rgba(255,255,255,0.76) 100%)",
-                border: "1px solid rgba(255,255,255,0.82)",
-                boxShadow: "0 14px 30px rgba(100,120,110,0.12), 0 1px 0 rgba(255,255,255,0.95) inset",
-                backdropFilter: "blur(16px)",
-                WebkitBackdropFilter: "blur(16px)",
+                background: "linear-gradient(160deg, rgba(255,255,255,0.98) 0%, rgba(250,251,250,0.97) 55%, rgba(245,247,246,0.98) 100%)",
+                border: "1px solid rgba(229,233,230,0.95)",
+                boxShadow: "0 18px 34px rgba(100,120,110,0.18), 0 1px 0 rgba(255,255,255,0.98) inset",
+                zIndex: 30,
               }}
             >
               {PLATFORM_OPTIONS.map((option) => (
@@ -643,11 +642,10 @@ function Hero() {
                 minWidth: "12rem",
                 padding: "0.45rem",
                 borderRadius: "1rem",
-                background: "linear-gradient(160deg, rgba(255,255,255,0.84) 0%, rgba(255,255,255,0.58) 55%, rgba(255,255,255,0.76) 100%)",
-                border: "1px solid rgba(255,255,255,0.82)",
-                boxShadow: "0 14px 30px rgba(100,120,110,0.12), 0 1px 0 rgba(255,255,255,0.95) inset",
-                backdropFilter: "blur(16px)",
-                WebkitBackdropFilter: "blur(16px)",
+                background: "linear-gradient(160deg, rgba(255,255,255,0.98) 0%, rgba(250,251,250,0.97) 55%, rgba(245,247,246,0.98) 100%)",
+                border: "1px solid rgba(229,233,230,0.95)",
+                boxShadow: "0 18px 34px rgba(100,120,110,0.18), 0 1px 0 rgba(255,255,255,0.98) inset",
+                zIndex: 30,
               }}
             >
               {STYLE_OPTIONS.map((option) => (
