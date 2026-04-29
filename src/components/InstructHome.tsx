@@ -530,26 +530,26 @@ function Hero() {
               setIsStyleMenuOpen(false);
             }}
             style={{
-              minHeight: "2.4rem",
+              minHeight: "1.7rem",
               borderRadius: "999px",
               display: "inline-flex",
               alignItems: "center",
-              gap: "0.55rem",
-              padding: "0.55rem 0.9rem",
+              gap: "0.4rem",
+              padding: "0.38rem 0.65rem",
               background: "linear-gradient(145deg, rgba(255,255,255,0.7), rgba(255,255,255,0.3))",
               border: "1px solid rgba(255,255,255,0.8)",
-              boxShadow: "0 4px 12px rgba(0,0,0,0.06), 0 1px 0 rgba(255,255,255,0.9) inset",
-              color: "#6a7478",
+              boxShadow: "0 4px 12px rgba(39, 36, 36, 0.0), 0 1px 0 rgba(255,255,255,0.9) inset",
+              color: "#000000",
               cursor: "pointer",
               transition: "all 0.25s ease",
               backdropFilter: "blur(8px)",
               WebkitBackdropFilter: "blur(8px)",
-              fontSize: "0.92rem",
+              fontSize: "0.72rem",
               fontWeight: 500,
             }}
           >
             <span>{selectedPlatform}</span>
-            <ChevronDown size={15} style={{ transform: isPlatformMenuOpen ? "rotate(180deg)" : "rotate(0deg)", transition: "transform 0.2s ease" }} />
+            <ChevronDown size={11} style={{ transform: isPlatformMenuOpen ? "rotate(180deg)" : "rotate(0deg)", transition: "transform 0.2s ease" }} />
           </button>
 
           {isPlatformMenuOpen && (
@@ -559,9 +559,9 @@ function Hero() {
                 position: "absolute",
                 left: 0,
                 top: "calc(100% + 0.6rem)",
-                minWidth: "12rem",
-                padding: "0.45rem",
-                borderRadius: "1rem",
+                minWidth: "8.4rem",
+                padding: "0.3rem",
+                borderRadius: "0.7rem",
                 background: "linear-gradient(160deg, rgba(255,255,255,0.98) 0%, rgba(250,251,250,0.97) 55%, rgba(245,247,246,0.98) 100%)",
                 border: "1px solid rgba(229,233,230,0.95)",
                 boxShadow: "0 18px 34px rgba(100,120,110,0.18), 0 1px 0 rgba(255,255,255,0.98) inset",
@@ -582,13 +582,13 @@ function Hero() {
                     display: "flex",
                     alignItems: "center",
                     justifyContent: "space-between",
-                    borderRadius: "0.8rem",
-                    padding: "0.7rem 0.8rem",
+                    borderRadius: "0.56rem",
+                    padding: "0.5rem 0.56rem",
                     border: "none",
                     background: option === selectedPlatform ? "rgba(255,255,255,0.55)" : "transparent",
                     color: "#4e565d",
                     cursor: "pointer",
-                    fontSize: "0.9rem",
+                    fontSize: "0.68rem",
                     fontWeight: option === selectedPlatform ? 600 : 500,
                     transition: "background 0.2s ease",
                   }}
@@ -610,26 +610,26 @@ function Hero() {
               setIsPlatformMenuOpen(false);
             }}
             style={{
-              minHeight: "2.4rem",
+              minHeight: "1.7rem",
               borderRadius: "999px",
               display: "inline-flex",
               alignItems: "center",
-              gap: "0.55rem",
-              padding: "0.55rem 0.9rem",
+              gap: "0.4rem",
+              padding: "0.38rem 0.65rem",
               background: "linear-gradient(145deg, rgba(255,255,255,0.7), rgba(255,255,255,0.3))",
               border: "1px solid rgba(255,255,255,0.8)",
-              boxShadow: "0 4px 12px rgba(0,0,0,0.06), 0 1px 0 rgba(255,255,255,0.9) inset",
-              color: "#6a7478",
+              boxShadow: "0 4px 12px rgba(39, 36, 36, 0.0), 0 1px 0 rgba(255,255,255,0.9) inset",
+              color: "#000000",
               cursor: "pointer",
               transition: "all 0.25s ease",
               backdropFilter: "blur(8px)",
               WebkitBackdropFilter: "blur(8px)",
-              fontSize: "0.92rem",
+              fontSize: "0.72rem",
               fontWeight: 500,
             }}
           >
             <span>{selectedStyle}</span>
-            <ChevronDown size={15} style={{ transform: isStyleMenuOpen ? "rotate(180deg)" : "rotate(0deg)", transition: "transform 0.2s ease" }} />
+            <ChevronDown size={11} style={{ transform: isStyleMenuOpen ? "rotate(180deg)" : "rotate(0deg)", transition: "transform 0.2s ease" }} />
           </button>
 
           {isStyleMenuOpen && (
@@ -639,9 +639,9 @@ function Hero() {
                 position: "absolute",
                 left: 0,
                 top: "calc(100% + 0.6rem)",
-                minWidth: "12rem",
-                padding: "0.45rem",
-                borderRadius: "1rem",
+                minWidth: "8.4rem",
+                padding: "0.3rem",
+                borderRadius: "0.7rem",
                 background: "linear-gradient(160deg, rgba(255,255,255,0.98) 0%, rgba(250,251,250,0.97) 55%, rgba(245,247,246,0.98) 100%)",
                 border: "1px solid rgba(229,233,230,0.95)",
                 boxShadow: "0 18px 34px rgba(100,120,110,0.18), 0 1px 0 rgba(255,255,255,0.98) inset",
@@ -662,13 +662,13 @@ function Hero() {
                     display: "flex",
                     alignItems: "center",
                     justifyContent: "space-between",
-                    borderRadius: "0.8rem",
-                    padding: "0.7rem 0.8rem",
+                    borderRadius: "0.56rem",
+                    padding: "0.5rem 0.56rem",
                     border: "none",
                     background: option === selectedStyle ? "rgba(255,255,255,0.55)" : "transparent",
                     color: "#4e565d",
                     cursor: "pointer",
-                    fontSize: "0.9rem",
+                    fontSize: "0.68rem",
                     fontWeight: option === selectedStyle ? 600 : 500,
                     transition: "background 0.2s ease",
                   }}
