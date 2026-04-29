@@ -5,9 +5,9 @@ import { Mic, MicOff, Upload, X } from 'lucide-react';
 import { useUserProfile, generateContent } from '@/lib/hooks';
 import { CopyButton, LoadingSkeleton, Toast } from './ui/Toast';
 import type { CaptionStyle } from '@/lib/types';
+import { PlatformSelector, type Platform } from './PlatformSelector';
 
 const STYLES: CaptionStyle[] = ['Aggressive', 'Ragebait', 'Emotional', 'Funny', 'Normal'];
-const WORD_LIMITS = [10, 15, 20, 30, 50, 75, 100];
 
 export function CaptionGenerator() {
   const { profile } = useUserProfile();
@@ -15,6 +15,7 @@ export function CaptionGenerator() {
 
   const [prompt, setPrompt] = useState('');
   const [imageBase64, setImageBase64] = useState<string | null>(null);
+  const [platform, setPlatform] = useState<Platform>('linkedin');
   const [style, setStyle] = useState<CaptionStyle>('Normal');
   const [wordLimit, setWordLimit] = useState(100);
   const [hinglish, setHinglish] = useState(false);
@@ -209,27 +210,13 @@ export function CaptionGenerator() {
             </div>
           </div>
 
-          {/* Word Limit Slider */}
-          <div>
-            <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
-              Word Limit: {wordLimit}
-            </label>
-            <div className="flex gap-2">
-              {WORD_LIMITS.map((limit) => (
-                <button
-                  key={limit}
-                  onClick={() => setWordLimit(limit)}
-                  className={`px-3 py-1 rounded-lg text-sm font-medium transition-colors ${
-                    wordLimit === limit
-                      ? 'bg-blue-600 text-white'
-                      : 'bg-gray-200 dark:bg-gray-700 text-gray-700 dark:text-gray-300 hover:bg-gray-300 dark:hover:bg-gray-600'
-                  }`}
-                >
-                  {limit}
-                </button>
-              ))}
-            </div>
-          </div>
+          {/* Platform Word Limit Selector */}
+          <PlatformSelector
+            platform={platform}
+            setPlatform={setPlatform}
+            wordLimit={wordLimit}
+            setWordLimit={setWordLimit}
+          />
 
           {/* Toggles */}
           <div className="flex flex-wrap gap-4">

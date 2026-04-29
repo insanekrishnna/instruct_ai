@@ -3,9 +3,12 @@
 import Image from "next/image";
 import Link from "next/link";
 import { Canvas, useFrame, useThree } from "@react-three/fiber";
-import { ArrowRight, ChartLine, Earth, FastForward, ImageIcon, LogIn, Mic, Moon, Shell, Speech, Sun, HandCoins, ChartScatter } from "lucide-react";
+import { ArrowRight, ChartLine, ChevronDown, Earth, FastForward, ImageIcon, LogIn, Mic, Moon, Shell, Speech, Sun, HandCoins, ChartScatter } from "lucide-react";
 import { useEffect, useMemo, useRef, useState } from "react";
 import * as THREE from "three";
+
+const PLATFORM_OPTIONS = ["Instagram", "LinkedIn", "Twitter"] as const;
+const STYLE_OPTIONS = ["Minimal", "Funny", "Aggressive", "Storytelling", "Curious"] as const;
 
 const featureCards = [
   {
@@ -155,6 +158,10 @@ function OrbScene() {
 
 function Hero() {
   const [theme, setTheme] = useState<"light" | "dark">("light");
+  const [selectedPlatform, setSelectedPlatform] = useState<(typeof PLATFORM_OPTIONS)[number]>("Instagram");
+  const [selectedStyle, setSelectedStyle] = useState<(typeof STYLE_OPTIONS)[number]>("Minimal");
+  const [isPlatformMenuOpen, setIsPlatformMenuOpen] = useState(false);
+  const [isStyleMenuOpen, setIsStyleMenuOpen] = useState(false);
 
   useEffect(() => {
     const root = document.documentElement;
@@ -171,6 +178,23 @@ function Hero() {
       root.classList.remove("dark");
     }
   }, [theme]);
+
+  useEffect(() => {
+    const handlePointerDown = (event: MouseEvent) => {
+      const target = event.target as HTMLElement | null;
+
+      if (!target?.closest("[data-hero-menu-root='true']")) {
+        setIsPlatformMenuOpen(false);
+        setIsStyleMenuOpen(false);
+      }
+    };
+
+    document.addEventListener("mousedown", handlePointerDown);
+
+    return () => {
+      document.removeEventListener("mousedown", handlePointerDown);
+    };
+  }, []);
 
   return (
     <section className="relative overflow-hidden bg-[#fff]">
@@ -401,21 +425,21 @@ function Hero() {
     }}
   >
     {/* Inner glass surface */}
-    <div
-      style={{
-        borderRadius: "calc(2rem - 1.5px)",
-        background:
-          "linear-gradient(160deg, rgba(255,255,255,0.82) 0%, rgba(255,255,255,0.54) 50%, rgba(255,255,255,0.72) 100%)",
-        boxShadow:
-          "0 1px 0 rgba(255,255,255,0.95) inset, 0 -1px 0 rgba(255,255,255,0.4) inset, inset 0 10px 30px rgba(255,255,255,0.5), 0 10px 30px rgba(104,116,110,0.04)",
-        backdropFilter: "blur(20px)",
-        WebkitBackdropFilter: "blur(20px)",
-        position: "relative",
-        overflow: "hidden",
-        minHeight: "8.2rem",
-        padding: "1.5rem 1.5rem 1.25rem 1.5rem",
-      }}
-    >
+      <div
+        style={{
+          borderRadius: "calc(2rem - 1.5px)",
+          background:
+            "linear-gradient(160deg, rgba(255,255,255,0.82) 0%, rgba(255,255,255,0.54) 50%, rgba(255,255,255,0.72) 100%)",
+          boxShadow:
+            "0 1px 0 rgba(255,255,255,0.95) inset, 0 -1px 0 rgba(255,255,255,0.4) inset, inset 0 10px 30px rgba(255,255,255,0.5), 0 10px 30px rgba(104,116,110,0.04)",
+          backdropFilter: "blur(20px)",
+          WebkitBackdropFilter: "blur(20px)",
+          position: "relative",
+          overflow: "visible",
+          minHeight: "8.2rem",
+          padding: "1.5rem 1.5rem 1.25rem 1.5rem",
+        }}
+      >
       {/* Specular highlight strip — top edge glint */}
       <div
         style={{
@@ -475,10 +499,189 @@ function Hero() {
           fontSize: "1.05rem",
           lineHeight: "1.3rem",
           color: "#1e1d1d",
-          height: "4rem",
+          height: "5.25rem",
+          paddingBottom: "2.7rem",
+          paddingRight: "6rem",
         }}
         className="placeholder:text-[#b0b8bb]"
       />
+
+      <div
+        data-hero-menu-root="true"
+        style={{
+          position: "absolute",
+          bottom: "1rem",
+          left: "1rem",
+          zIndex: 2,
+          display: "flex",
+          alignItems: "center",
+          gap: "0.65rem",
+          flexWrap: "wrap",
+          maxWidth: "calc(100% - 8rem)",
+        }}
+      >
+        <div style={{ position: "relative" }}>
+          <button
+            type="button"
+            aria-haspopup="menu"
+            aria-expanded={isPlatformMenuOpen}
+            onClick={() => {
+              setIsPlatformMenuOpen((current) => !current);
+              setIsStyleMenuOpen(false);
+            }}
+            style={{
+              minHeight: "2.4rem",
+              borderRadius: "999px",
+              display: "inline-flex",
+              alignItems: "center",
+              gap: "0.55rem",
+              padding: "0.55rem 0.9rem",
+              background: "linear-gradient(145deg, rgba(255,255,255,0.7), rgba(255,255,255,0.3))",
+              border: "1px solid rgba(255,255,255,0.8)",
+              boxShadow: "0 4px 12px rgba(0,0,0,0.06), 0 1px 0 rgba(255,255,255,0.9) inset",
+              color: "#6a7478",
+              cursor: "pointer",
+              transition: "all 0.25s ease",
+              backdropFilter: "blur(8px)",
+              WebkitBackdropFilter: "blur(8px)",
+              fontSize: "0.92rem",
+              fontWeight: 500,
+            }}
+          >
+            <span>{selectedPlatform}</span>
+            <ChevronDown size={15} style={{ transform: isPlatformMenuOpen ? "rotate(180deg)" : "rotate(0deg)", transition: "transform 0.2s ease" }} />
+          </button>
+
+          {isPlatformMenuOpen && (
+            <div
+              role="menu"
+              style={{
+                position: "absolute",
+                left: 0,
+                top: "calc(100% + 0.6rem)",
+                minWidth: "12rem",
+                padding: "0.45rem",
+                borderRadius: "1rem",
+                background: "linear-gradient(160deg, rgba(255,255,255,0.84) 0%, rgba(255,255,255,0.58) 55%, rgba(255,255,255,0.76) 100%)",
+                border: "1px solid rgba(255,255,255,0.82)",
+                boxShadow: "0 14px 30px rgba(100,120,110,0.12), 0 1px 0 rgba(255,255,255,0.95) inset",
+                backdropFilter: "blur(16px)",
+                WebkitBackdropFilter: "blur(16px)",
+              }}
+            >
+              {PLATFORM_OPTIONS.map((option) => (
+                <button
+                  key={option}
+                  type="button"
+                  role="menuitem"
+                  onClick={() => {
+                    setSelectedPlatform(option);
+                    setIsPlatformMenuOpen(false);
+                  }}
+                  style={{
+                    width: "100%",
+                    display: "flex",
+                    alignItems: "center",
+                    justifyContent: "space-between",
+                    borderRadius: "0.8rem",
+                    padding: "0.7rem 0.8rem",
+                    border: "none",
+                    background: option === selectedPlatform ? "rgba(255,255,255,0.55)" : "transparent",
+                    color: "#4e565d",
+                    cursor: "pointer",
+                    fontSize: "0.9rem",
+                    fontWeight: option === selectedPlatform ? 600 : 500,
+                    transition: "background 0.2s ease",
+                  }}
+                >
+                  <span>{option}</span>
+                </button>
+              ))}
+            </div>
+          )}
+        </div>
+
+        <div style={{ position: "relative" }}>
+          <button
+            type="button"
+            aria-haspopup="menu"
+            aria-expanded={isStyleMenuOpen}
+            onClick={() => {
+              setIsStyleMenuOpen((current) => !current);
+              setIsPlatformMenuOpen(false);
+            }}
+            style={{
+              minHeight: "2.4rem",
+              borderRadius: "999px",
+              display: "inline-flex",
+              alignItems: "center",
+              gap: "0.55rem",
+              padding: "0.55rem 0.9rem",
+              background: "linear-gradient(145deg, rgba(255,255,255,0.7), rgba(255,255,255,0.3))",
+              border: "1px solid rgba(255,255,255,0.8)",
+              boxShadow: "0 4px 12px rgba(0,0,0,0.06), 0 1px 0 rgba(255,255,255,0.9) inset",
+              color: "#6a7478",
+              cursor: "pointer",
+              transition: "all 0.25s ease",
+              backdropFilter: "blur(8px)",
+              WebkitBackdropFilter: "blur(8px)",
+              fontSize: "0.92rem",
+              fontWeight: 500,
+            }}
+          >
+            <span>{selectedStyle}</span>
+            <ChevronDown size={15} style={{ transform: isStyleMenuOpen ? "rotate(180deg)" : "rotate(0deg)", transition: "transform 0.2s ease" }} />
+          </button>
+
+          {isStyleMenuOpen && (
+            <div
+              role="menu"
+              style={{
+                position: "absolute",
+                left: 0,
+                top: "calc(100% + 0.6rem)",
+                minWidth: "12rem",
+                padding: "0.45rem",
+                borderRadius: "1rem",
+                background: "linear-gradient(160deg, rgba(255,255,255,0.84) 0%, rgba(255,255,255,0.58) 55%, rgba(255,255,255,0.76) 100%)",
+                border: "1px solid rgba(255,255,255,0.82)",
+                boxShadow: "0 14px 30px rgba(100,120,110,0.12), 0 1px 0 rgba(255,255,255,0.95) inset",
+                backdropFilter: "blur(16px)",
+                WebkitBackdropFilter: "blur(16px)",
+              }}
+            >
+              {STYLE_OPTIONS.map((option) => (
+                <button
+                  key={option}
+                  type="button"
+                  role="menuitem"
+                  onClick={() => {
+                    setSelectedStyle(option);
+                    setIsStyleMenuOpen(false);
+                  }}
+                  style={{
+                    width: "100%",
+                    display: "flex",
+                    alignItems: "center",
+                    justifyContent: "space-between",
+                    borderRadius: "0.8rem",
+                    padding: "0.7rem 0.8rem",
+                    border: "none",
+                    background: option === selectedStyle ? "rgba(255,255,255,0.55)" : "transparent",
+                    color: "#4e565d",
+                    cursor: "pointer",
+                    fontSize: "0.9rem",
+                    fontWeight: option === selectedStyle ? 600 : 500,
+                    transition: "background 0.2s ease",
+                  }}
+                >
+                  <span>{option}</span>
+                </button>
+              ))}
+            </div>
+          )}
+        </div>
+      </div>
 
       {/* Action buttons */}
       <div
