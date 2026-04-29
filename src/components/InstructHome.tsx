@@ -410,7 +410,7 @@ function Hero() {
           Every viral post starts here
         </h1>
 
-        <p className="mt-2 max-w-xl text-balance text-[0.8rem] font leading-none text-[#657985] md:text-[1.35rem]">
+        <p className="mt-3 max-w-xl text-balance text-[0.8rem] font leading-none text-[#657985] md:text-[1.35rem]">
           Where viral posts are written
         </p>
 
@@ -724,7 +724,7 @@ function Hero() {
               role="menu"
               style={{
                 position: "absolute",
-                left: 0,
+                  left: 0,
                 top: "calc(100% + 0.35rem)",
                 minWidth: "8.4rem",
                 padding: "0.2rem",
