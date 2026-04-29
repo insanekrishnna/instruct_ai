@@ -10,6 +10,12 @@ import * as THREE from "three";
 const PLATFORM_OPTIONS = ["Instagram", "LinkedIn", "Twitter"] as const;
 const STYLE_OPTIONS = ["Minimal", "Funny", "Aggressive", "Storytelling", "Curious"] as const;
 const WORD_OPTIONS = ["50 words", "100 words", "200 words", "300 words", "400 words"] as const;
+const TYPING_PLACEHOLDERS = [
+  "Create an engaging Instagram caption",
+  "Write compelling content for my carousel",
+  "Craft a professional LinkedIn post",
+  "Create a high impact Twitter/X thread",
+] as const;
 
 const featureCards = [
   {
@@ -162,10 +168,13 @@ function Hero() {
   const [isMobile, setIsMobile] = useState(false);
   const [selectedPlatform, setSelectedPlatform] = useState<(typeof PLATFORM_OPTIONS)[number]>("Instagram");
   const [selectedStyle, setSelectedStyle] = useState<(typeof STYLE_OPTIONS)[number]>("Minimal");
-  const [selectedWordLimit, setSelectedWordLimit] = useState<(typeof WORD_OPTIONS)[number]>("300 words");
+  const [selectedWordLimit, setSelectedWordLimit] = useState<(typeof WORD_OPTIONS)[number]>("50 words");
   const [isPlatformMenuOpen, setIsPlatformMenuOpen] = useState(false);
   const [isStyleMenuOpen, setIsStyleMenuOpen] = useState(false);
   const [isWordMenuOpen, setIsWordMenuOpen] = useState(false);
+  const [placeholderIndex, setPlaceholderIndex] = useState(0);
+  const [typedPlaceholder, setTypedPlaceholder] = useState("");
+  const [isDeletingPlaceholder, setIsDeletingPlaceholder] = useState(false);
 
   useEffect(() => {
     const root = document.documentElement;
@@ -213,7 +222,37 @@ function Hero() {
     };
   }, []);
 
-  const mobileWordLimitLabel = selectedWordLimit.replace(" words", "w");
+  useEffect(() => {
+    const currentPlaceholder = TYPING_PLACEHOLDERS[placeholderIndex];
+    let timeoutId: ReturnType<typeof setTimeout>;
+
+    const progress = currentPlaceholder.length === 0 ? 1 : typedPlaceholder.length / currentPlaceholder.length;
+    const easedDelay = (base: number, range: number) => {
+      const curve = Math.sin(progress * Math.PI);
+      return Math.round(base + range * (1 - curve));
+    };
+
+    if (!isDeletingPlaceholder && typedPlaceholder.length < currentPlaceholder.length) {
+      timeoutId = setTimeout(() => {
+        setTypedPlaceholder(currentPlaceholder.slice(0, typedPlaceholder.length + 1));
+      }, easedDelay(34, 44));
+    } else if (!isDeletingPlaceholder && typedPlaceholder.length === currentPlaceholder.length) {
+      timeoutId = setTimeout(() => {
+        setIsDeletingPlaceholder(true);
+      }, 1300);
+    } else if (isDeletingPlaceholder && typedPlaceholder.length > 0) {
+      timeoutId = setTimeout(() => {
+        setTypedPlaceholder((current) => current.slice(0, -1));
+      }, easedDelay(22, 26));
+    } else {
+      timeoutId = setTimeout(() => {
+        setIsDeletingPlaceholder(false);
+        setPlaceholderIndex((current) => (current + 1) % TYPING_PLACEHOLDERS.length);
+      }, 180);
+    }
+
+    return () => clearTimeout(timeoutId);
+  }, [isDeletingPlaceholder, placeholderIndex, typedPlaceholder]);
 
   return (
     <section className="relative overflow-hidden bg-[#fff]">
@@ -506,7 +545,7 @@ function Hero() {
 
       {/* Textarea */}
       <textarea
-        placeholder="Where viral posts are written"
+        placeholder={typedPlaceholder}
         style={{
           position: "relative",
           zIndex: 1,
@@ -517,8 +556,8 @@ function Hero() {
           border: "none",
           outline: "none",
           caretColor: "transparent",
-          fontSize: "1.05rem",
-          lineHeight: "1.3rem",
+          fontSize: isMobile ? "0.84rem" : "1.05rem",
+          lineHeight: isMobile ? "1.05rem" : "1.3rem",
           color: "#1e1d1d",
           height: isMobile ? "4.25rem" : "3.85rem",
           paddingBottom: "2.7rem",
@@ -735,7 +774,7 @@ function Hero() {
               flexShrink: 0,
             }}
           >
-            <span>{isMobile ? mobileWordLimitLabel : selectedWordLimit}</span>
+            <span>{selectedWordLimit}</span>
             <ChevronDown size={11} style={{ transform: isWordMenuOpen ? "rotate(180deg)" : "rotate(0deg)", transition: "transform 0.2s ease" }} />
           </button>
 
