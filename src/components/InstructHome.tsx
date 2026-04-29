@@ -512,14 +512,16 @@ function Hero() {
           zIndex: 1,
           width: "100%",
           resize: "none",
+          overflow: "hidden",
           background: "transparent",
           border: "none",
           outline: "none",
+          caretColor: "transparent",
           fontSize: "1.05rem",
           lineHeight: "1.3rem",
           color: "#1e1d1d",
-          height: "5.25rem",
-          paddingBottom: "2.95rem",
+          height: isMobile ? "4.25rem" : "3.85rem",
+          paddingBottom: "2.7rem",
           paddingRight: isMobile ? "4.9rem" : "5.35rem",
         }}
         className="placeholder:text-[#b0b8bb]"
