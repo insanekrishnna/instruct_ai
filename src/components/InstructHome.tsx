@@ -872,6 +872,7 @@ function Hero() {
   </div>
 </div>
 
+        {/* Suggestion chips temporarily disabled for later reuse.
         <div className="mt-4 flex flex-wrap justify-center gap-2.5 md:mt-5">
           <button className="inline-flex items-center gap-2 rounded-full border border-dashed border-[#d7ddda] bg-white/68 px-5 py-1 text-[0.98rem] font-medium text-[#4e565d]">
             <ChartLine size={15} />
@@ -890,6 +891,7 @@ function Hero() {
             Instant
           </button>
         </div>
+        */}
       </div>
     </section>
   );
