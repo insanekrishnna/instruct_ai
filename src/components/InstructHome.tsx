@@ -519,8 +519,8 @@ function Hero() {
           lineHeight: "1.3rem",
           color: "#1e1d1d",
           height: "5.25rem",
-          paddingBottom: "2.7rem",
-          paddingRight: "6rem",
+          paddingBottom: "2.95rem",
+          paddingRight: isMobile ? "4.9rem" : "5.35rem",
         }}
         className="placeholder:text-[#b0b8bb]"
       />
@@ -529,14 +529,14 @@ function Hero() {
         data-hero-menu-root="true"
         style={{
           position: "absolute",
-          bottom: "1rem",
+          bottom: "0.95rem",
           left: "1rem",
           zIndex: 9998,
           display: "flex",
           alignItems: "center",
-          gap: isMobile ? "0.35rem" : "0.65rem",
+          gap: isMobile ? "0.28rem" : "0.55rem",
           flexWrap: "nowrap",
-          maxWidth: isMobile ? "calc(100% - 6.2rem)" : "calc(100% - 8rem)",
+          maxWidth: isMobile ? "calc(100% - 4.7rem)" : "calc(100% - 6rem)",
         }}
       >
         <div style={{ position: "relative" }}>
@@ -554,8 +554,8 @@ function Hero() {
               borderRadius: "999px",
               display: "inline-flex",
               alignItems: "center",
-              gap: "0.4rem",
-              padding: isMobile ? "0.34rem 0.45rem" : "0.38rem 0.65rem",
+              gap: isMobile ? "0.28rem" : "0.4rem",
+              padding: isMobile ? "0.3rem 0.38rem" : "0.38rem 0.65rem",
               background: "linear-gradient(145deg, rgba(255,255,255,0.7), rgba(255,255,255,0.3))",
               border: "1px solid rgba(255,255,255,0.8)",
               boxShadow: "0 4px 12px rgba(39, 36, 36, 0.0), 0 1px 0 rgba(255,255,255,0.9) inset",
@@ -564,7 +564,7 @@ function Hero() {
               transition: "all 0.25s ease",
               backdropFilter: "blur(8px)",
               WebkitBackdropFilter: "blur(8px)",
-              fontSize: isMobile ? "0.66rem" : "0.72rem",
+              fontSize: isMobile ? "0.62rem" : "0.72rem",
               fontWeight: 500,
               flexShrink: 0,
             }}
@@ -636,8 +636,8 @@ function Hero() {
               borderRadius: "999px",
               display: "inline-flex",
               alignItems: "center",
-              gap: "0.4rem",
-              padding: isMobile ? "0.34rem 0.45rem" : "0.38rem 0.65rem",
+              gap: isMobile ? "0.28rem" : "0.4rem",
+              padding: isMobile ? "0.3rem 0.38rem" : "0.38rem 0.65rem",
               background: "linear-gradient(145deg, rgba(255,255,255,0.7), rgba(255,255,255,0.3))",
               border: "1px solid rgba(255,255,255,0.8)",
               boxShadow: "0 4px 12px rgba(39, 36, 36, 0.0), 0 1px 0 rgba(255,255,255,0.9) inset",
@@ -646,7 +646,7 @@ function Hero() {
               transition: "all 0.25s ease",
               backdropFilter: "blur(8px)",
               WebkitBackdropFilter: "blur(8px)",
-              fontSize: isMobile ? "0.66rem" : "0.72rem",
+              fontSize: isMobile ? "0.62rem" : "0.72rem",
               fontWeight: 500,
               flexShrink: 0,
             }}
@@ -718,8 +718,8 @@ function Hero() {
               borderRadius: "999px",
               display: "inline-flex",
               alignItems: "center",
-              gap: "0.4rem",
-              padding: isMobile ? "0.34rem 0.45rem" : "0.38rem 0.65rem",
+              gap: isMobile ? "0.28rem" : "0.4rem",
+              padding: isMobile ? "0.3rem 0.38rem" : "0.38rem 0.65rem",
               background: "linear-gradient(145deg, rgba(255,255,255,0.7), rgba(255,255,255,0.3))",
               border: "1px solid rgba(255,255,255,0.8)",
               boxShadow: "0 4px 12px rgba(0,0,0,0.06), 0 1px 0 rgba(255,255,255,0.9) inset",
@@ -728,7 +728,7 @@ function Hero() {
               transition: "all 0.25s ease",
               backdropFilter: "blur(8px)",
               WebkitBackdropFilter: "blur(8px)",
-              fontSize: isMobile ? "0.66rem" : "0.72rem",
+              fontSize: isMobile ? "0.62rem" : "0.72rem",
               fontWeight: 500,
               flexShrink: 0,
             }}
@@ -790,16 +790,16 @@ function Hero() {
       <div
         style={{
           position: "absolute",
-          bottom: "1.1rem",
-          right: "1.1rem",
+          bottom: "0.88rem",
+          right: "0.88rem",
           zIndex: 2,
           display: "flex",
           alignItems: "center",
-          gap: "0.6rem",
+          gap: "0.4rem",
         }}
       >
         {/* Mic button — glass pill */}
-        <button
+        {/* <button
           aria-label="Voice input"
           style={{
             width: "2.5rem",
@@ -829,14 +829,14 @@ function Hero() {
           }}
         >
           <Mic size={17} />
-        </button>
+        </button> */}
 
         {/* Submit button — frosted glass pill with glow */}
         <button
           aria-label="Submit prompt"
           style={{
-            width: "3rem",
-            height: "3rem",
+            width: "2.7rem",
+            height: "2.7rem",
             borderRadius: "50%",
             display: "grid",
             placeItems: "center",
@@ -863,7 +863,7 @@ function Hero() {
             (e.currentTarget as HTMLButtonElement).style.color = "#7a8a8f";
           }}
         >
-          <ArrowRight size={19} />
+          <ArrowRight size={17} />
         </button>
       </div>
     </div>
