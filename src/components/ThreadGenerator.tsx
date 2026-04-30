@@ -14,7 +14,7 @@ export function ThreadGenerator() {
   const [script, setScript] = useState<string | null>(null);
   const [items, setItems] = useState<string[] | null>(null);
   const [error, setError] = useState<string | null>(null);
-  const [toast, setToast] = useState<string | null>(null);
+  const [toast] = useState<string | null>(null);
 
   const handleGenerate = async () => {
     if (!topic.trim()) {

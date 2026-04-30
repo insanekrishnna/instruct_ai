@@ -1,7 +1,7 @@
 'use client';
 
 import { useState, useEffect } from 'react';
-import type { UserProfile, Niche } from '@/lib/types';
+import type { UserProfile } from '@/lib/types';
 
 const PROFILE_STORAGE_KEY = 'viral-caption-user-profile';
 
@@ -50,7 +50,7 @@ export function useToast() {
 export async function generateContent(
   feature: string,
   prompt: string,
-  options: any = {}
+  options: Record<string, unknown> = {}
 ) {
   const response = await fetch('/api/generate', {
     method: 'POST',

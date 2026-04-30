@@ -15,7 +15,7 @@ export function RepurposeMode() {
   const [isLoading, setIsLoading] = useState(false);
   const [result, setResult] = useState<string | null>(null);
   const [error, setError] = useState<string | null>(null);
-  const [toast, setToast] = useState<string | null>(null);
+  const [toast] = useState<string | null>(null);
 
   const handleGenerate = async () => {
     if (!content.trim()) {

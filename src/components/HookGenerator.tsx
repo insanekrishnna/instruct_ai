@@ -14,7 +14,7 @@ export function HookGenerator() {
   const [isLoading, setIsLoading] = useState(false);
   const [hooks, setHooks] = useState<string[] | null>(null);
   const [error, setError] = useState<string | null>(null);
-  const [toast, setToast] = useState<string | null>(null);
+  const [toast] = useState<string | null>(null);
 
   const handleGenerate = async () => {
     if (!topic.trim()) {

@@ -3,7 +3,7 @@
 import Image from "next/image";
 import Link from "next/link";
 import { Canvas, useFrame, useThree } from "@react-three/fiber";
-import { ArrowRight, ChartLine, ChevronDown, Earth, FastForward, ImageIcon, LogIn, Mic, Moon, Shell, Speech, Sun, HandCoins, ChartScatter } from "lucide-react";
+import { ArrowRight, ChevronDown, Earth, LogIn, Moon, Speech, Sun, HandCoins, ChartScatter } from "lucide-react";
 import { useEffect, useMemo, useRef, useState } from "react";
 import * as THREE from "three";
 
@@ -169,12 +169,89 @@ function Hero() {
   const [selectedPlatform, setSelectedPlatform] = useState<(typeof PLATFORM_OPTIONS)[number]>("Instagram");
   const [selectedStyle, setSelectedStyle] = useState<(typeof STYLE_OPTIONS)[number]>("Minimal");
   const [selectedWordLimit, setSelectedWordLimit] = useState<(typeof WORD_OPTIONS)[number]>("50 words");
+  const [promptText, setPromptText] = useState("");
+  const [isGenerating, setIsGenerating] = useState(false);
+  const [generationError, setGenerationError] = useState<string | null>(null);
+  const [generationResult, setGenerationResult] = useState<{
+    body: string;
+    hashtags: string[];
+    wordCount: number;
+    remaining: number;
+    platform: string;
+  } | null>(null);
   const [isPlatformMenuOpen, setIsPlatformMenuOpen] = useState(false);
   const [isStyleMenuOpen, setIsStyleMenuOpen] = useState(false);
   const [isWordMenuOpen, setIsWordMenuOpen] = useState(false);
   const [placeholderIndex, setPlaceholderIndex] = useState(0);
   const [typedPlaceholder, setTypedPlaceholder] = useState("");
   const [isDeletingPlaceholder, setIsDeletingPlaceholder] = useState(false);
+
+  const submitGeneration = async () => {
+    const trimmed = promptText.trim();
+    if (!trimmed) {
+      setGenerationError("Write a prompt first.");
+      return;
+    }
+
+    const platform =
+      selectedPlatform === "Twitter" ? "Twitter/X" : selectedPlatform;
+
+    const wordNum = Number.parseInt(selectedWordLimit.split(" ")[0] ?? "50", 10);
+    const wordLimit = wordNum <= 80 ? "Short" : wordNum <= 150 ? "Medium" : "Long";
+
+    setIsGenerating(true);
+    setGenerationError(null);
+    setGenerationResult(null);
+
+    try {
+      const res = await fetch("/api/generate", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        redirect: "follow",
+        body: JSON.stringify({
+          platform,
+          tone: selectedStyle,
+          wordLimit,
+          prompt: trimmed,
+        }),
+      });
+
+      const contentType = res.headers.get("content-type") ?? "";
+
+      // If middleware (or something) returned HTML, treat as unauthenticated.
+      const looksLikeJson = contentType.includes("application/json");
+
+      if (!looksLikeJson) {
+        window.location.href = `/login?from=${encodeURIComponent("/")}`;
+        return;
+      }
+
+      const data = (await res.json()) as unknown;
+      if (!res.ok) {
+        const maybe = data as { error?: unknown };
+        const maybeWithCode = maybe as { code?: unknown };
+        if (res.status === 401 || maybeWithCode?.code === "UNAUTHORIZED") {
+          window.location.href = `/login?from=${encodeURIComponent("/")}`;
+          return;
+        }
+
+        setGenerationError(typeof maybe?.error === "string" ? maybe.error : "Generation failed.");
+        return;
+      }
+
+      setGenerationResult(data as {
+        body: string;
+        hashtags: string[];
+        wordCount: number;
+        remaining: number;
+        platform: string;
+      });
+    } catch (e) {
+      setGenerationError(e instanceof Error ? e.message : "Generation failed.");
+    } finally {
+      setIsGenerating(false);
+    }
+  };
 
   useEffect(() => {
     const root = document.documentElement;
@@ -254,6 +331,70 @@ function Hero() {
     return () => clearTimeout(timeoutId);
   }, [isDeletingPlaceholder, placeholderIndex, typedPlaceholder]);
 
+  const heroControlOuterStyle = {
+    display: "inline-flex",
+    alignItems: "center",
+    gap: "0.55rem",
+    borderRadius: "999px",
+    padding: "1.5px",
+    background: "linear-gradient(145deg, rgba(255,255,255,0.96) 0%, rgba(255,255,255,0.28) 45%, rgba(255,255,255,0.62) 100%)",
+    boxShadow: "0 4px 12px rgba(68,80,55,0.04), 0 1px 4px rgba(0,0,0,0.02), 0 1px 0 rgba(255,255,255,0.95) inset",
+    backdropFilter: "blur(24px)",
+    WebkitBackdropFilter: "blur(24px)",
+    transition: "all 0.25s ease",
+  } as const;
+
+  const heroControlInnerStyle = {
+    display: "inline-flex",
+    alignItems: "center",
+    gap: "0.5rem",
+    borderRadius: "999px",
+    padding: isMobile ? "0.62rem 0.78rem" : "0.7rem 0.95rem",
+    background: "linear-gradient(160deg, rgba(255,255,255,0.82) 0%, rgba(255,255,255,0.54) 50%, rgba(255,255,255,0.72) 100%)",
+    boxShadow: "0 1px 0 rgba(255,255,255,0.95) inset, 0 -1px 0 rgba(255,255,255,0.38) inset, inset 0 8px 24px rgba(255,255,255,0.50)",
+    backdropFilter: "blur(20px)",
+    WebkitBackdropFilter: "blur(20px)",
+    position: "relative",
+    overflow: "hidden",
+    color: "#18181b",
+  } as const;
+
+  const menuButtonStyle = {
+    minHeight: isMobile ? "1.95rem" : "1.7rem",
+    borderRadius: "999px",
+    display: "inline-flex",
+    alignItems: "center",
+    justifyContent: "space-between",
+    gap: isMobile ? "0.22rem" : "0.4rem",
+    padding: isMobile ? "0.38rem 0.46rem" : "0.38rem 0.65rem",
+    background: "linear-gradient(145deg, rgba(255,255,255,0.7), rgba(255,255,255,0.3))",
+    border: "1px solid rgba(255,255,255,0.8)",
+    boxShadow: "0 4px 12px rgba(39, 36, 36, 0.0), 0 1px 0 rgba(255,255,255,0.9) inset",
+    color: "#000000",
+    cursor: "pointer",
+    transition: "all 0.25s ease",
+    backdropFilter: "blur(8px)",
+    WebkitBackdropFilter: "blur(8px)",
+    fontSize: isMobile ? "0.64rem" : "0.72rem",
+    fontWeight: 500,
+    flexShrink: 0,
+    maxWidth: isMobile ? "100%" : undefined,
+  } as const;
+
+  const menuPanelStyle = {
+    position: "absolute",
+    left: 0,
+    top: "calc(100% + 0.35rem)",
+    minWidth: isMobile ? "7.2rem" : "8.4rem",
+    maxWidth: isMobile ? "calc(100vw - 3rem)" : undefined,
+    padding: "0.2rem",
+    borderRadius: "0.7rem",
+    background: "linear-gradient(160deg, rgba(255,255,255,0.98) 0%, rgba(250,251,250,0.97) 55%, rgba(245,247,246,0.98) 100%)",
+    border: "1px solid rgba(229,233,230,0.95)",
+    boxShadow: "0 18px 34px rgba(100,120,110,0.18), 0 1px 0 rgba(255,255,255,0.98) inset",
+    zIndex: 9999,
+  } as const;
+
   return (
     <section className="relative overflow-hidden bg-[#fff]">
       <div className="absolute inset-0 bg-[radial-gradient(circle_at_50%_0%,_rgba(232,242,236,0.95)_0%,_rgba(255,255,255,0.82)_34%,_rgba(255,255,255,1)_62%)]" />
@@ -261,7 +402,7 @@ function Hero() {
       <div className="absolute left-1/2 top-0 h-[22rem] w-[68rem] -translate-x-1/2 bg-[radial-gradient(ellipse_at_center,_rgba(220,239,230,0.45)_0%,_rgba(255,255,255,0)_68%)] opacity-90 blur-3xl" />
       <div className="absolute inset-x-0 top-0 h-[18rem] opacity-[0.18] [background-image:radial-gradient(rgba(13, 13, 13, 0.22)_1px,transparent_1px)] [background-size:12px_12px] [mask-image:linear-gradient(to_bottom,black,transparent_88%)]" />
 
-      <div className="absolute left-5 top-5 z-20 md:left-8 md:top-7">
+      <div className="absolute left-4 top-4 z-20 sm:left-5 sm:top-5 md:left-8 md:top-7">
         <Link
           href="/"
           aria-label="Capmax home"
@@ -326,7 +467,7 @@ function Hero() {
               alt="Capmax logo"
               width={56}
               height={56}
-              className="relative z-10 h-[3.1rem] w-[3.1rem] object-contain"
+              className="relative z-10 h-[2.8rem] w-[2.8rem] object-contain sm:h-[3.1rem] sm:w-[3.1rem]"
             />
             <span
               className="relative z-10 hidden pr-3 sm:inline"
@@ -343,40 +484,14 @@ function Hero() {
         </Link>
       </div>
 
-      <div className="absolute right-5 top-5 z-20 flex items-center gap-2 md:right-8 md:top-7 md:gap-3">
+      <div className="absolute right-4 top-4 z-20 flex flex-col items-end gap-2 sm:right-5 sm:top-5 sm:flex-row sm:items-center md:right-8 md:top-7 md:gap-3">
         <button
           type="button"
           aria-label={`Switch to ${theme === "light" ? "dark" : "light"} theme`}
           onClick={() => setTheme((current) => (current === "light" ? "dark" : "light"))}
-          style={{
-            display: "inline-flex",
-            alignItems: "center",
-            gap: "0.55rem",
-            borderRadius: "999px",
-            padding: "1.5px",
-            background: "linear-gradient(145deg, rgba(255,255,255,0.96) 0%, rgba(255,255,255,0.28) 45%, rgba(255,255,255,0.62) 100%)",
-            boxShadow: "0 4px 12px rgba(68,80,55,0.04), 0 1px 4px rgba(0,0,0,0.02), 0 1px 0 rgba(255,255,255,0.95) inset",
-            backdropFilter: "blur(24px)",
-            WebkitBackdropFilter: "blur(24px)",
-            transition: "all 0.25s ease",
-          }}
+          style={heroControlOuterStyle}
         >
-          <span
-            style={{
-              display: "inline-flex",
-              alignItems: "center",
-              gap: "0.5rem",
-              borderRadius: "999px",
-              padding: "0.7rem 0.95rem",
-              background: "linear-gradient(160deg, rgba(255,255,255,0.82) 0%, rgba(255,255,255,0.54) 50%, rgba(255,255,255,0.72) 100%)",
-              boxShadow: "0 1px 0 rgba(255,255,255,0.95) inset, 0 -1px 0 rgba(255,255,255,0.38) inset, inset 0 8px 24px rgba(255,255,255,0.50)",
-              backdropFilter: "blur(20px)",
-              WebkitBackdropFilter: "blur(20px)",
-              position: "relative",
-              overflow: "hidden",
-              color: "#18181b",
-            }}
-          >
+          <span style={heroControlInnerStyle}>
             <span
               style={{
                 position: "absolute",
@@ -399,36 +514,9 @@ function Hero() {
         <Link
           href="/login"
           aria-label="Log in"
-          style={{
-            display: "inline-flex",
-            alignItems: "center",
-            gap: "0.55rem",
-            borderRadius: "999px",
-            padding: "1.5px",
-            background: "linear-gradient(145deg, rgba(255,255,255,0.96) 0%, rgba(255,255,255,0.28) 45%, rgba(255,255,255,0.62) 100%)",
-            boxShadow: "0 4px 12px rgba(68,80,55,0.04), 0 1px 4px rgba(0,0,0,0.02), 0 1px 0 rgba(255,255,255,0.95) inset",
-            backdropFilter: "blur(24px)",
-            WebkitBackdropFilter: "blur(24px)",
-            textDecoration: "none",
-            transition: "all 0.25s ease",
-          }}
+          style={{ ...heroControlOuterStyle, textDecoration: "none" }}
         >
-          <span
-            style={{
-              display: "inline-flex",
-              alignItems: "center",
-              gap: "0.5rem",
-              borderRadius: "999px",
-              padding: "0.7rem 0.95rem",
-              background: "linear-gradient(160deg, rgba(255,255,255,0.82) 0%, rgba(255,255,255,0.54) 50%, rgba(255,255,255,0.72) 100%)",
-              boxShadow: "0 1px 0 rgba(255,255,255,0.95) inset, 0 -1px 0 rgba(255,255,255,0.38) inset, inset 0 8px 24px rgba(255,255,255,0.50)",
-              backdropFilter: "blur(20px)",
-              WebkitBackdropFilter: "blur(20px)",
-              position: "relative",
-              overflow: "hidden",
-              color: "#18181b",
-            }}
-          >
+          <span style={heroControlInnerStyle}>
             <span
               style={{
                 position: "absolute",
@@ -448,13 +536,13 @@ function Hero() {
           </span>
         </Link>
       </div>
-      <div className="relative mx-auto flex min-h-screen w-full max-w-7xl flex-col items-center justify-center px-6 pb-10 pt-10 text-center md:px-10 md:pb-12 md:pt-12">
-        <div className="mb-2 md:mb-3">
+      <div className="relative mx-auto flex min-h-screen w-full max-w-7xl flex-col items-center justify-center px-4 pb-12 pt-28 text-center sm:px-6 sm:pb-10 sm:pt-32 md:px-10 md:pb-12 md:pt-12">
+        <div className="mb-3 md:mb-3">
           <OrbScene />
         </div>
 
         <h1
-          className="max-w-[20ch] text-[2rem] leading-[0.96] tracking-[-0.045em] text-[#000000] md:text-[5.15rem]"
+          className="max-w-[11ch] text-[clamp(2.45rem,12vw,5.15rem)] leading-[0.92] tracking-[-0.05em] text-[#000000] sm:max-w-[14ch] md:max-w-[20ch]"
           style={{
             fontFamily: "var(--font-editorial), serif",
             fontWeight: 550,
@@ -464,11 +552,11 @@ function Hero() {
           Every viral post starts here
         </h1>
 
-        <p className="mt-3 max-w-xl text-balance text-[0.8rem] font leading-none text-[#657985] md:text-[1.35rem]">
+        <p className="mt-3 max-w-[18rem] text-balance text-[0.9rem] leading-tight text-[#657985] sm:max-w-xl md:text-[1.35rem]">
           Where viral posts are written
         </p>
 
-        <div className="mt-5 w-full max-w-[48rem] md:mt-7">
+        <div className="mt-6 w-full max-w-[48rem] md:mt-7">
   {/* Outer glass shell */}
   <div
     style={{
@@ -494,8 +582,8 @@ function Hero() {
           WebkitBackdropFilter: "blur(20px)",
           position: "relative",
           overflow: "visible",
-          minHeight: "8.2rem",
-          padding: "1.5rem 1.5rem 1.25rem 1.5rem",
+          minHeight: isMobile ? "9.75rem" : "6.55rem",
+          padding: isMobile ? "1rem 0.95rem 1rem 0.95rem" : "1.15rem 1.35rem 1rem 1.35rem",
         }}
       >
       {/* Specular highlight strip — top edge glint */}
@@ -546,6 +634,14 @@ function Hero() {
       {/* Textarea */}
       <textarea
         placeholder={typedPlaceholder}
+        value={promptText}
+        onChange={(e) => setPromptText(e.target.value)}
+        onKeyDown={(e) => {
+          if (e.key === "Enter" && (e.ctrlKey || e.metaKey)) {
+            e.preventDefault();
+            void submitGeneration();
+          }
+        }}
         style={{
           position: "relative",
           zIndex: 1,
@@ -555,13 +651,13 @@ function Hero() {
           background: "transparent",
           border: "none",
           outline: "none",
-          caretColor: "transparent",
-          fontSize: isMobile ? "0.84rem" : "1.05rem",
-          lineHeight: isMobile ? "1.05rem" : "1.3rem",
+          caretColor: "#1e1d1d",
+          fontSize: isMobile ? "0.92rem" : "1.05rem",
+          lineHeight: isMobile ? "1.28rem" : "1.3rem",
           color: "#1e1d1d",
-          height: isMobile ? "4.25rem" : "3.85rem",
-          paddingBottom: "2.7rem",
-          paddingRight: isMobile ? "4.9rem" : "5.35rem",
+          height: isMobile ? "4.35rem" : "3.1rem",
+          paddingBottom: isMobile ? "4.15rem" : "2.35rem",
+          paddingRight: isMobile ? "4.25rem" : "5.35rem",
         }}
         className="placeholder:text-[#b0b8bb]"
       />
@@ -570,14 +666,16 @@ function Hero() {
         data-hero-menu-root="true"
         style={{
           position: "absolute",
-          bottom: "0.95rem",
+          bottom: "0.78rem",
           left: "1rem",
           zIndex: 9998,
           display: "flex",
-          alignItems: "center",
-          gap: isMobile ? "0.28rem" : "0.55rem",
-          flexWrap: "nowrap",
-          maxWidth: isMobile ? "calc(100% - 4.7rem)" : "calc(100% - 6rem)",
+          alignItems: isMobile ? "flex-end" : "center",
+          alignContent: "flex-start",
+          gap: isMobile ? "0.38rem" : "0.55rem",
+          rowGap: isMobile ? "0.42rem" : undefined,
+          flexWrap: isMobile ? "wrap" : "nowrap",
+          maxWidth: isMobile ? "calc(100% - 4.15rem)" : "calc(100% - 6rem)",
         }}
       >
         <div style={{ position: "relative" }}>
@@ -590,25 +688,7 @@ function Hero() {
               setIsStyleMenuOpen(false);
               setIsWordMenuOpen(false);
             }}
-            style={{
-              minHeight: "1.7rem",
-              borderRadius: "999px",
-              display: "inline-flex",
-              alignItems: "center",
-              gap: isMobile ? "0.28rem" : "0.4rem",
-              padding: isMobile ? "0.3rem 0.38rem" : "0.38rem 0.65rem",
-              background: "linear-gradient(145deg, rgba(255,255,255,0.7), rgba(255,255,255,0.3))",
-              border: "1px solid rgba(255,255,255,0.8)",
-              boxShadow: "0 4px 12px rgba(39, 36, 36, 0.0), 0 1px 0 rgba(255,255,255,0.9) inset",
-              color: "#000000",
-              cursor: "pointer",
-              transition: "all 0.25s ease",
-              backdropFilter: "blur(8px)",
-              WebkitBackdropFilter: "blur(8px)",
-              fontSize: isMobile ? "0.62rem" : "0.72rem",
-              fontWeight: 500,
-              flexShrink: 0,
-            }}
+            style={menuButtonStyle}
           >
             <span>{selectedPlatform}</span>
             <ChevronDown size={11} style={{ transform: isPlatformMenuOpen ? "rotate(180deg)" : "rotate(0deg)", transition: "transform 0.2s ease" }} />
@@ -617,18 +697,7 @@ function Hero() {
           {isPlatformMenuOpen && (
             <div
               role="menu"
-              style={{
-                position: "absolute",
-                left: 0,
-                top: "calc(100% + 0.35rem)",
-                minWidth: "8.4rem",
-                padding: "0.2rem",
-                borderRadius: "0.7rem",
-                background: "linear-gradient(160deg, rgba(255,255,255,0.98) 0%, rgba(250,251,250,0.97) 55%, rgba(245,247,246,0.98) 100%)",
-                border: "1px solid rgba(229,233,230,0.95)",
-                boxShadow: "0 18px 34px rgba(100,120,110,0.18), 0 1px 0 rgba(255,255,255,0.98) inset",
-                zIndex: 9999,
-              }}
+              style={menuPanelStyle}
             >
               {PLATFORM_OPTIONS.map((option) => (
                 <button
@@ -672,25 +741,7 @@ function Hero() {
               setIsPlatformMenuOpen(false);
               setIsWordMenuOpen(false);
             }}
-            style={{
-              minHeight: "1.7rem",
-              borderRadius: "999px",
-              display: "inline-flex",
-              alignItems: "center",
-              gap: isMobile ? "0.28rem" : "0.4rem",
-              padding: isMobile ? "0.3rem 0.38rem" : "0.38rem 0.65rem",
-              background: "linear-gradient(145deg, rgba(255,255,255,0.7), rgba(255,255,255,0.3))",
-              border: "1px solid rgba(255,255,255,0.8)",
-              boxShadow: "0 4px 12px rgba(39, 36, 36, 0.0), 0 1px 0 rgba(255,255,255,0.9) inset",
-              color: "#000000",
-              cursor: "pointer",
-              transition: "all 0.25s ease",
-              backdropFilter: "blur(8px)",
-              WebkitBackdropFilter: "blur(8px)",
-              fontSize: isMobile ? "0.62rem" : "0.72rem",
-              fontWeight: 500,
-              flexShrink: 0,
-            }}
+            style={menuButtonStyle}
           >
             <span>{selectedStyle}</span>
             <ChevronDown size={11} style={{ transform: isStyleMenuOpen ? "rotate(180deg)" : "rotate(0deg)", transition: "transform 0.2s ease" }} />
@@ -699,18 +750,7 @@ function Hero() {
           {isStyleMenuOpen && (
             <div
               role="menu"
-              style={{
-                position: "absolute",
-                left: 0,
-                top: "calc(100% + 0.35rem)",
-                minWidth: "8.4rem",
-                padding: "0.2rem",
-                borderRadius: "0.7rem",
-                background: "linear-gradient(160deg, rgba(255,255,255,0.98) 0%, rgba(250,251,250,0.97) 55%, rgba(245,247,246,0.98) 100%)",
-                border: "1px solid rgba(229,233,230,0.95)",
-                boxShadow: "0 18px 34px rgba(100,120,110,0.18), 0 1px 0 rgba(255,255,255,0.98) inset",
-                zIndex: 9999,
-              }}
+              style={menuPanelStyle}
             >
               {STYLE_OPTIONS.map((option) => (
                 <button
@@ -754,25 +794,7 @@ function Hero() {
               setIsPlatformMenuOpen(false);
               setIsStyleMenuOpen(false);
             }}
-            style={{
-              minHeight: "1.7rem",
-              borderRadius: "999px",
-              display: "inline-flex",
-              alignItems: "center",
-              gap: isMobile ? "0.28rem" : "0.4rem",
-              padding: isMobile ? "0.3rem 0.38rem" : "0.38rem 0.65rem",
-              background: "linear-gradient(145deg, rgba(255,255,255,0.7), rgba(255,255,255,0.3))",
-              border: "1px solid rgba(255,255,255,0.8)",
-              boxShadow: "0 4px 12px rgba(0,0,0,0.06), 0 1px 0 rgba(255,255,255,0.9) inset",
-              color: "#6a7478",
-              cursor: "pointer",
-              transition: "all 0.25s ease",
-              backdropFilter: "blur(8px)",
-              WebkitBackdropFilter: "blur(8px)",
-              fontSize: isMobile ? "0.62rem" : "0.72rem",
-              fontWeight: 500,
-              flexShrink: 0,
-            }}
+            style={{ ...menuButtonStyle, color: "#6a7478" }}
           >
             <span>{selectedWordLimit}</span>
             <ChevronDown size={11} style={{ transform: isWordMenuOpen ? "rotate(180deg)" : "rotate(0deg)", transition: "transform 0.2s ease" }} />
@@ -781,18 +803,7 @@ function Hero() {
           {isWordMenuOpen && (
             <div
               role="menu"
-              style={{
-                position: "absolute",
-                  left: 0,
-                top: "calc(100% + 0.35rem)",
-                minWidth: "8.4rem",
-                padding: "0.2rem",
-                borderRadius: "0.7rem",
-                background: "linear-gradient(160deg, rgba(255,255,255,0.98) 0%, rgba(250,251,250,0.97) 55%, rgba(245,247,246,0.98) 100%)",
-                border: "1px solid rgba(229,233,230,0.95)",
-                boxShadow: "0 18px 34px rgba(100,120,110,0.18), 0 1px 0 rgba(255,255,255,0.98) inset",
-                zIndex: 9999,
-              }}
+              style={menuPanelStyle}
             >
               {WORD_OPTIONS.map((option) => (
                 <button
@@ -831,8 +842,8 @@ function Hero() {
       <div
         style={{
           position: "absolute",
-          bottom: "0.88rem",
-          right: "0.88rem",
+          bottom: isMobile ? "0.9rem" : "0.72rem",
+          right: isMobile ? "0.8rem" : "0.88rem",
           zIndex: 2,
           display: "flex",
           alignItems: "center",
@@ -875,9 +886,10 @@ function Hero() {
         {/* Submit button — frosted glass pill with glow */}
         <button
           aria-label="Submit prompt"
+          type="button"
           style={{
-            width: "2.7rem",
-            height: "2.7rem",
+            width: isMobile ? "2.45rem" : "2.7rem",
+            height: isMobile ? "2.45rem" : "2.7rem",
             borderRadius: "50%",
             display: "grid",
             placeItems: "center",
@@ -887,22 +899,27 @@ function Hero() {
             boxShadow:
               "0 8px 24px rgba(100,120,110,0.15), 0 2px 0 rgba(255,255,255,1) inset, 0 -1px 0 rgba(180,190,185,0.3) inset",
             color: "#7a8a8f",
-            cursor: "pointer",
+            cursor: isGenerating ? "not-allowed" : "pointer",
+            opacity: isGenerating ? 0.65 : 1,
             transition: "all 0.28s cubic-bezier(0.34,1.56,0.64,1)",
             backdropFilter: "blur(12px)",
           }}
           onMouseEnter={e => {
+            if (isGenerating) return;
             (e.currentTarget as HTMLButtonElement).style.transform = "scale(1.06)";
             (e.currentTarget as HTMLButtonElement).style.boxShadow =
               "0 12px 32px rgba(100,120,110,0.22), 0 2px 0 rgba(255,255,255,1) inset, 0 -1px 0 rgba(180,190,185,0.3) inset";
             (e.currentTarget as HTMLButtonElement).style.color = "#4a5a60";
           }}
           onMouseLeave={e => {
+            if (isGenerating) return;
             (e.currentTarget as HTMLButtonElement).style.transform = "scale(1)";
             (e.currentTarget as HTMLButtonElement).style.boxShadow =
               "0 8px 24px rgba(100,120,110,0.15), 0 2px 0 rgba(255,255,255,1) inset, 0 -1px 0 rgba(180,190,185,0.3) inset";
             (e.currentTarget as HTMLButtonElement).style.color = "#7a8a8f";
           }}
+          onClick={() => void submitGeneration()}
+          disabled={isGenerating}
         >
           <ArrowRight size={17} />
         </button>
@@ -910,6 +927,40 @@ function Hero() {
     </div>
   </div>
 </div>
+
+        {(generationError || generationResult) && (
+          <div className="mx-auto mt-4 w-full max-w-[48rem] text-left">
+            <div className="rounded-[28px] border border-white/70 bg-white/70 p-5 shadow-[0_18px_56px_rgba(48,56,52,0.07)] backdrop-blur-xl">
+              {generationError && (
+                <p className="text-sm font-medium text-red-700">{generationError}</p>
+              )}
+
+              {generationResult && (
+                <div className="space-y-3">
+                  <div className="flex flex-wrap items-center justify-between gap-2">
+                    <p className="text-sm font-medium text-[#2f3638]">
+                      Generated for {generationResult.platform} · {generationResult.wordCount} words
+                    </p>
+                    <p className="text-xs text-[#6f7778]">
+                      Remaining: <span className="font-semibold text-[#2f3638]">{generationResult.remaining}</span>
+                    </p>
+                  </div>
+
+                  <div className="whitespace-pre-wrap text-[0.98rem] leading-6 text-[#1e1d1d]">
+                    {generationResult.body}
+                  </div>
+
+                  <div className="text-sm font-medium text-[#4e565d]">
+                    {generationResult.hashtags?.join(" ")}
+                  </div>
+                </div>
+              )}
+            </div>
+            <p className="mt-2 text-xs text-[#6f7778]">
+              Tip: Press <span className="font-semibold">Ctrl/⌘ + Enter</span> to generate.
+            </p>
+          </div>
+        )}
 
         {/* Suggestion chips temporarily disabled for later reuse.
         <div className="mt-4 flex flex-wrap justify-center gap-2.5 md:mt-5">
@@ -959,17 +1010,19 @@ function FeatureSection() {
 
             return (
               <article
-                className={`instruct-feature-card is-${card.tone} min-h-[156px] rounded-[24px] border border-[rgba(20,24,28,0.06)] bg-white/88 p-5 md:p-6`}
+                className={`instruct-feature-card is-${card.tone} min-h-[132px] rounded-[22px] border border-[rgba(20,24,28,0.06)] bg-white/88 p-4 pr-[4.75rem] sm:min-h-[156px] sm:rounded-[24px] sm:p-5 sm:pr-20 md:p-6 md:pr-6`}
                 key={card.title}
               >
-                <div className="relative z-10 max-w-[270px]">
-                  <h3 className="text-[1.18rem] font-medium tracking-[-0.03em] text-[#2f3638] md:text-[1.28rem]">
+                <div className="relative z-10 max-w-full sm:max-w-[270px]">
+                  <h3 className="text-[0.98rem] font-medium tracking-[-0.03em] text-[#2f3638] sm:text-[1.18rem] md:text-[1.28rem]">
                     {card.title}
                   </h3>
-                  <p className="mt-2 text-[0.92rem] leading-6 text-[#697274]">{card.copy}</p>
+                  <p className="mt-1.5 text-[0.72rem] leading-[1.45] text-[#697274] sm:mt-2 sm:max-w-[270px] sm:text-[0.92rem] sm:leading-6">
+                    {card.copy}
+                  </p>
                 </div>
                 <div className="instruct-card-visual">
-                  <Icon size={22} />
+                  <Icon size={18} className="sm:h-[22px] sm:w-[22px]" />
                 </div>
               </article>
             );

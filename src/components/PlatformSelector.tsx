@@ -1,6 +1,6 @@
 'use client';
 
-import { Camera, Linkedin } from 'lucide-react';
+import { Briefcase, Camera } from 'lucide-react';
 import { useEffect, useMemo, useState } from 'react';
 
 export type Platform = 'instagram' | 'twitter' | 'linkedin';
@@ -104,7 +104,7 @@ export function PlatformSelector({
     () => [
       { key: 'instagram' as const, label: 'Instagram', icon: Camera },
       { key: 'twitter' as const, label: 'Twitter/X', icon: XIcon },
-      { key: 'linkedin' as const, label: 'LinkedIn', icon: Linkedin },
+      { key: 'linkedin' as const, label: 'LinkedIn', icon: Briefcase },
     ],
     []
   );

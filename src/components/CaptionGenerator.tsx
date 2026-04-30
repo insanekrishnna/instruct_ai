@@ -9,6 +9,17 @@ import { PlatformSelector, type Platform } from './PlatformSelector';
 
 const STYLES: CaptionStyle[] = ['Aggressive', 'Ragebait', 'Emotional', 'Funny', 'Normal'];
 
+type SpeechRecognitionResultLike = { 0: { transcript: string } };
+type SpeechRecognitionEventLike = { results: ArrayLike<SpeechRecognitionResultLike> };
+type SpeechRecognitionErrorEventLike = { error: string };
+type SpeechRecognitionCtorLike = new () => {
+  onstart: null | (() => void);
+  onend: null | (() => void);
+  onresult: null | ((event: SpeechRecognitionEventLike) => void);
+  onerror: null | ((event: SpeechRecognitionErrorEventLike) => void);
+  start: () => void;
+};
+
 export function CaptionGenerator() {
   const { profile } = useUserProfile();
   const fileInputRef = useRef<HTMLInputElement>(null);
@@ -25,7 +36,7 @@ export function CaptionGenerator() {
   const [generated, setGenerated] = useState<string | string[] | null>(null);
   const [engagementScore, setEngagementScore] = useState<number | null>(null);
   const [error, setError] = useState<string | null>(null);
-  const [toast, setToast] = useState<string | null>(null);
+  const [toast] = useState<string | null>(null);
   const [editingIndex, setEditingIndex] = useState<number | null>(null);
 
   const handleImageUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -45,18 +56,23 @@ export function CaptionGenerator() {
       return;
     }
 
-    const SpeechRecognition = (window as any).webkitSpeechRecognition || (window as any).SpeechRecognition;
-    const recognition = new SpeechRecognition();
+    const w = window as unknown as { webkitSpeechRecognition?: SpeechRecognitionCtorLike; SpeechRecognition?: SpeechRecognitionCtorLike };
+    const SpeechRecognitionCtor = w.webkitSpeechRecognition ?? w.SpeechRecognition;
+    if (!SpeechRecognitionCtor) {
+      setError('Voice input is not supported in your browser');
+      return;
+    }
+    const recognition = new SpeechRecognitionCtor();
 
     recognition.onstart = () => setIsListening(true);
     recognition.onend = () => setIsListening(false);
-    recognition.onresult = (event: any) => {
+    recognition.onresult = (event: SpeechRecognitionEventLike) => {
       const transcript = Array.from(event.results)
-        .map((result: any) => result[0].transcript)
+        .map((result) => result[0].transcript)
         .join('');
       setPrompt((prev) => (prev ? `${prev} ${transcript}` : transcript));
     };
-    recognition.onerror = (event: any) => {
+    recognition.onerror = (event: SpeechRecognitionErrorEventLike) => {
       setError(`Voice error: ${event.error}`);
     };
 
@@ -90,11 +106,6 @@ export function CaptionGenerator() {
     } finally {
       setIsLoading(false);
     }
-  };
-
-  const handleCopyCaption = (text: string) => {
-    navigator.clipboard.writeText(text);
-    setToast('Copied to clipboard!');
   };
 
   const handleEditCaption = (index: number, newText: string) => {
