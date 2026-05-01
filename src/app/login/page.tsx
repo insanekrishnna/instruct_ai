@@ -3,7 +3,7 @@
 import Image from 'next/image';
 import Link from 'next/link';
 import { signIn } from 'next-auth/react';
-import { useMemo, useState } from 'react';
+import { useMemo, useState, useEffect } from 'react';
 
 function buildCallbackUrl(from: string | null, callbackUrl: string | null): string {
   const candidate = callbackUrl ?? from ?? '/';
@@ -13,10 +13,17 @@ function buildCallbackUrl(from: string | null, callbackUrl: string | null): stri
   return '/';
 }
 
+const ERROR_MESSAGES: Record<string, string> = {
+  OAuthAccountNotLinked: 'This email is already registered. Please sign in with your email and password, or link your Google account.',
+  CredentialsSignin: 'Invalid email or password',
+  GoogleSignin: 'Google sign-in failed. Please try again.',
+  Default: 'Authentication failed. Please try again.',
+};
+
 export default function LoginPage({
   searchParams,
 }: {
-  searchParams?: { from?: string; callbackUrl?: string };
+  searchParams?: { from?: string; callbackUrl?: string; error?: string };
 }) {
   const callbackUrl = buildCallbackUrl(searchParams?.from ?? null, searchParams?.callbackUrl ?? null);
   const signupHref = useMemo(() => `/signup?from=${encodeURIComponent(callbackUrl)}`, [callbackUrl]);
@@ -25,6 +32,13 @@ export default function LoginPage({
   const [password, setPassword] = useState('');
   const [isLoading, setIsLoading] = useState(false);
   const [formError, setFormError] = useState<string | null>(null);
+
+  useEffect(() => {
+    if (searchParams?.error) {
+      const errorKey = searchParams.error as keyof typeof ERROR_MESSAGES;
+      setFormError(ERROR_MESSAGES[errorKey] || ERROR_MESSAGES.Default);
+    }
+  }, [searchParams?.error]);
 
   const onSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -75,6 +89,12 @@ export default function LoginPage({
           Continue with Google to unlock your FREE credits and save your last 3 generations.
         </p>
 
+        {formError && (
+          <div className="mt-6 w-full max-w-md rounded-[20px] border border-red-200/50 bg-red-50/80 p-4 backdrop-blur-xl">
+            <p className="text-sm font-medium text-red-700">{formError}</p>
+          </div>
+        )}
+
         <form
           onSubmit={onSubmit}
           className="mt-8 w-full max-w-md rounded-[28px] border border-white/70 bg-white/70 p-5 text-left shadow-[0_18px_56px_rgba(48,56,52,0.07)] backdrop-blur-xl"
@@ -105,8 +125,6 @@ export default function LoginPage({
               />
             </div>
 
-            {formError && <p className="text-sm font-medium text-red-700">{formError}</p>}
-
             <button
               type="submit"
               disabled={isLoading}
@@ -133,7 +151,8 @@ export default function LoginPage({
         <button
           type="button"
           onClick={() => void onGoogle()}
-          className="mt-8 inline-flex items-center justify-center gap-3 rounded-full border border-white/60 bg-white/70 px-6 py-3 text-sm font-semibold text-[#1e1d1d] shadow-[0_18px_56px_rgba(48,56,52,0.09)] backdrop-blur-xl transition hover:bg-white/80"
+          disabled={isLoading}
+          className="mt-8 inline-flex items-center justify-center gap-3 rounded-full border border-white/60 bg-white/70 px-6 py-3 text-sm font-semibold text-[#1e1d1d] shadow-[0_18px_56px_rgba(48,56,52,0.09)] backdrop-blur-xl transition hover:bg-white/80 disabled:cursor-not-allowed disabled:opacity-60"
         >
           <span className="grid h-7 w-7 place-items-center rounded-full bg-white">
             <span className="text-base font-bold">G</span>

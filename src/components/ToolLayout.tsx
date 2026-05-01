@@ -3,8 +3,9 @@
 import Image from 'next/image';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
-import { Settings } from 'lucide-react';
+import { Settings, LogOut } from 'lucide-react';
 import { useState } from 'react';
+import { useSession, signOut } from 'next-auth/react';
 
 interface ToolLayoutProps {
   children: React.ReactNode;
@@ -22,6 +23,13 @@ const TOOLS = [
 export function ToolLayout({ children, title, description }: ToolLayoutProps) {
   const pathname = usePathname();
   const [showNav, setShowNav] = useState(true);
+  const { data: session } = useSession();
+  const [isSigningOut, setIsSigningOut] = useState(false);
+
+  const handleSignOut = async () => {
+    setIsSigningOut(true);
+    await signOut({ callbackUrl: '/' });
+  };
 
   return (
     <div className="min-h-screen bg-white dark:bg-gray-950">
@@ -55,6 +63,26 @@ export function ToolLayout({ children, title, description }: ToolLayoutProps) {
               <Link href="/settings" className="p-2 hover:bg-gray-100 dark:hover:bg-gray-900 rounded-lg">
                 <Settings size={20} className="text-gray-600 dark:text-gray-300" />
               </Link>
+
+              {/* User Info and Logout */}
+              {session?.user && (
+                <div className="flex items-center gap-3 ml-4 pl-4 border-l border-gray-200 dark:border-gray-800">
+                  <div className="hidden sm:flex flex-col items-end">
+                    <p className="text-sm font-medium text-gray-900 dark:text-white">
+                      {session.user.name || session.user.email?.split('@')[0] || 'User'}
+                    </p>
+                    <p className="text-xs text-gray-500 dark:text-gray-400">{session.user.email}</p>
+                  </div>
+                  <button
+                    onClick={handleSignOut}
+                    disabled={isSigningOut}
+                    className="flex items-center gap-2 px-3 py-2 text-sm font-medium text-gray-600 dark:text-gray-300 hover:text-gray-900 dark:hover:text-white hover:bg-gray-100 dark:hover:bg-gray-900 rounded-lg transition-colors disabled:opacity-60 disabled:cursor-not-allowed"
+                    title="Sign out"
+                  >
+                    <LogOut size={18} />
+                  </button>
+                </div>
+              )}
             </nav>
 
             {/* Mobile menu button */}
