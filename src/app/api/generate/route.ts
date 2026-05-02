@@ -130,7 +130,7 @@ export async function POST(req: Request) {
   }
 
   return NextResponse.json({
-    content: processed.body,
+    body: processed.body,
     hashtags: processed.hashtags,
     wordCount: processed.wordCount,
     remaining: creditUse.remaining,
