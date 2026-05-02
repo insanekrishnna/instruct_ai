@@ -7,56 +7,12 @@ const WORD_RANGES: Record<WordLimit, { min: number; max: number }> = {
 };
 
 const STOPWORDS = new Set([
-  'the',
-  'and',
-  'that',
-  'this',
-  'with',
-  'from',
-  'your',
-  'you',
-  'for',
-  'are',
-  'was',
-  'were',
-  'have',
-  'has',
-  'had',
-  'but',
-  'not',
-  'they',
-  'them',
-  'their',
-  'what',
-  'when',
-  'where',
-  'why',
-  'how',
-  'into',
-  'about',
-  'just',
-  'like',
-  'really',
-  'very',
-  'more',
-  'most',
-  'some',
-  'over',
-  'under',
-  'than',
-  'then',
-  'there',
-  'here',
-  'because',
-  'also',
-  'too',
-  'i',
-  'im',
-  'we',
-  'our',
-  'us',
-  'its',
-  "it's",
+  'the', 'and', 'that', 'this', 'with', 'from', 'your', 'you', 'for',
+  'are', 'was', 'were', 'have', 'has', 'had', 'but', 'not', 'they',
+  'them', 'their', 'what', 'when', 'where', 'why', 'how', 'into',
+  'about', 'just', 'like', 'really', 'very', 'more', 'most', 'some',
+  'over', 'under', 'than', 'then', 'there', 'here', 'because', 'also',
+  'too', 'i', 'im', 'we', 'our', 'us', 'its', "it's",
 ]);
 
 function stripWrappingQuotes(text: string): string {
@@ -64,7 +20,7 @@ function stripWrappingQuotes(text: string): string {
   if (
     (trimmed.startsWith('"') && trimmed.endsWith('"')) ||
     (trimmed.startsWith("'") && trimmed.endsWith("'")) ||
-    (trimmed.startsWith('“') && trimmed.endsWith('”'))
+    (trimmed.startsWith('\u201c') && trimmed.endsWith('\u201d'))
   ) {
     return trimmed.slice(1, -1).trim();
   }
@@ -93,16 +49,8 @@ function removeMetaCommentary(text: string): string {
     }
 
     const metaStarts = [
-      'sure',
-      "here's",
-      'here is',
-      'of course',
-      'certainly',
-      'as an ai',
-      'as a language model',
-      'output:',
-      'post:',
-      'caption:',
+      'sure', "here's", 'here is', 'of course', 'certainly',
+      'as an ai', 'as a language model', 'output:', 'post:', 'caption:',
     ];
     if (metaStarts.some((m) => lower.startsWith(m))) {
       continue;
@@ -115,7 +63,6 @@ function removeMetaCommentary(text: string): string {
 }
 
 function sanitizeDashes(text: string): string {
-  // Remove em dashes and double hyphen patterns that read like em dashes.
   return text.replace(/—/g, '-').replace(/--+/g, '-');
 }
 
@@ -170,7 +117,9 @@ export function cleanOutput(text: string): string {
 
   const { body, hashtags } = extractHashtags(out);
   const fixedTags =
-    hashtags.length >= 5 ? hashtags.slice(0, 5) : [...hashtags, ...keywordHashtags(body, 5 - hashtags.length)];
+    hashtags.length >= 5
+      ? hashtags.slice(0, 5)
+      : [...hashtags, ...keywordHashtags(body, 5 - hashtags.length)];
 
   const final = `${body.trim()}\n\n${fixedTags.slice(0, 5).join(' ')}`.trim();
   return sanitizeDashes(collapseBlankLines(final));
@@ -180,7 +129,6 @@ export function extractHashtags(text: string): { body: string; hashtags: string[
   const cleaned = text.replace(/\r\n/g, '\n').trim();
   const lines = cleaned.split('\n');
 
-  // Prefer the last non-empty line if it contains hashtags.
   let hashtagLineIdx = -1;
   for (let i = lines.length - 1; i >= 0; i -= 1) {
     if (!lines[i].trim()) continue;
@@ -193,14 +141,15 @@ export function extractHashtags(text: string): { body: string; hashtags: string[
   if (hashtagLineIdx >= 0) {
     const line = lines[hashtagLineIdx];
     const tags = (line.match(/#[\p{L}\p{N}_]+/gu) ?? []).slice(0, 10);
-    const body = [...lines.slice(0, hashtagLineIdx), ...lines.slice(hashtagLineIdx + 1)].join('\n').trim();
+    const body = [...lines.slice(0, hashtagLineIdx), ...lines.slice(hashtagLineIdx + 1)]
+      .join('\n')
+      .trim();
     return { body: body || cleaned, hashtags: tags };
   }
 
   const tags = extractAllHashtags(cleaned).slice(0, 10);
   if (tags.length === 0) return { body: cleaned, hashtags: [] };
 
-  // Remove trailing hashtag-only chunks.
   let body = cleaned;
   const trailing = tags.slice(-5).join(' ');
   if (body.endsWith(trailing)) {
@@ -223,13 +172,10 @@ export function validateOutput(
   text: string,
   wordLimit: WordLimit
 ): { valid: boolean; wordCount: number; text: string } {
-  const { min, max } = WORD_RANGES[wordLimit];
+  const { max } = WORD_RANGES[wordLimit];
   const wordCount = countWords(text);
 
-  if (wordCount < Math.floor(min * 0.8)) {
-    return { valid: false, wordCount, text };
-  }
-
+  // Always return text -- never block short responses
   if (wordCount > Math.ceil(max * 1.2)) {
     const truncated = truncateToWords(text, max);
     return { valid: true, wordCount: countWords(truncated), text: truncated };
@@ -245,14 +191,16 @@ export function processOutput(
   const cleaned = cleanOutput(rawText);
   const { body, hashtags } = extractHashtags(cleaned);
 
-   console.log("CLEANED:", cleaned);
-  console.log("BODY:", body);
-  console.log("HASHTAGS:", hashtags);
-  
+  console.log('CLEANED:', cleaned);
+  console.log('BODY:', body);
+  console.log('HASHTAGS:', hashtags);
+
   const validation = validateOutput(body, wordLimit);
 
   const finalHashtags =
-    hashtags.length >= 5 ? hashtags.slice(0, 5) : [...hashtags, ...keywordHashtags(validation.text, 5 - hashtags.length)];
+    hashtags.length >= 5
+      ? hashtags.slice(0, 5)
+      : [...hashtags, ...keywordHashtags(validation.text, 5 - hashtags.length)];
 
   return {
     body: validation.text.trim(),
@@ -261,4 +209,3 @@ export function processOutput(
     valid: validation.valid,
   };
 }
-
