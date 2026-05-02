@@ -31,9 +31,38 @@ export function CopyButton({ text, className = '' }: CopyButtonProps) {
   const [copied, setCopied] = useState(false);
 
   const handleCopy = async () => {
-    await navigator.clipboard.writeText(text);
-    setCopied(true);
-    setTimeout(() => setCopied(false), 2000);
+    try {
+      if (navigator.clipboard && navigator.clipboard.writeText) {
+        await navigator.clipboard.writeText(text);
+      } else {
+        // Fallback for older browsers
+        const textarea = document.createElement('textarea');
+        textarea.value = text;
+        // Avoid scrolling to bottom
+        textarea.style.position = 'fixed'; // Prevent scrolling to bottom of page in MS Edge.
+        textarea.style.left = '-9999px';
+        document.body.appendChild(textarea);
+        textarea.focus();
+        textarea.select();
+        try {
+          const successful = document.execCommand('copy');
+          if (!successful) {
+            throw new Error('Fallback copy command was unsuccessful');
+          }
+        } catch (err) {
+          console.error('Fallback copy failed', err);
+          throw err;
+        } finally {
+          document.body.removeChild(textarea);
+        }
+      }
+      setCopied(true);
+      setTimeout(() => setCopied(false), 2000);
+    } catch (err) {
+      console.error('Failed to copy text: ', err);
+      // Optionally, show an error to the user
+      alert('Failed to copy text: ' + err.message);
+    }
   };
 
   return (

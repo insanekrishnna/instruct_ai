@@ -2,7 +2,7 @@ export type Feature = 'caption' | 'hook' | 'repurpose' | 'thread';
 
 export type CaptionStyle = 'Aggressive' | 'Ragebait' | 'Emotional' | 'Funny' | 'Normal';
 
-export type Platform = 'Instagram' | 'Twitter' | 'LinkedIn';
+export type Platform = 'Instagram' | 'Twitter/X' | 'LinkedIn';
 
 export type OutputFormat = 'Instagram caption' | 'Twitter thread' | 'LinkedIn post' | 'Carousel script';
 

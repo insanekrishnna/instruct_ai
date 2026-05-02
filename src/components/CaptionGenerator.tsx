@@ -90,13 +90,35 @@ export function CaptionGenerator() {
     setEngagementScore(null);
 
     try {
+      // Map style to tone
+      const toneMap: Record<CaptionStyle, string> = {
+        'Normal': 'Minimal',
+        'Funny': 'Funny',
+        'Ragebait': 'Aggressive',
+        'Emotional': 'Storytelling',
+        'Aggressive': 'Aggressive',
+      };
+
+      // Map wordLimit number to WordLimit string
+      const wordLimitMap: Record<number, string> = {
+        50: 'Short',
+        100: 'Short',
+        200: 'Medium',
+        300: 'Medium',
+        400: 'Long',
+      };
+
+      // Map lowercase platform to title-case
+      const platformMap: Record<string, string> = {
+        'instagram': 'Instagram',
+        'twitter': 'Twitter/X',
+        'linkedin': 'LinkedIn',
+      };
+
       const result = await generateContent('caption', prompt, {
-        style,
-        wordLimit,
-        hinglish,
-        abVariant,
-        imageBase64: imageBase64 ? imageBase64 : undefined,
-        userProfile: profile,
+        platform: platformMap[platform],
+        tone: toneMap[style],
+        wordLimit: wordLimitMap[wordLimit] || 'Medium',
       });
 
       setGenerated(result.content);

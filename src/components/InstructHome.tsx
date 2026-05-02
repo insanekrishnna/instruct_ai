@@ -3,8 +3,9 @@
 import Image from "next/image";
 import Link from "next/link";
 import { Canvas, useFrame, useThree } from "@react-three/fiber";
-import { ArrowRight, ChevronDown, Earth, LogIn, Moon, Speech, Sun, HandCoins, ChartScatter } from "lucide-react";
+import { ArrowRight, ChevronDown, Earth, LogIn, Moon, Speech, Sun, HandCoins, ChartScatter, Copy, Check } from "lucide-react";
 import { useEffect, useMemo, useRef, useState } from "react";
+import { useSession, signIn } from "next-auth/react";
 import * as THREE from "three";
 
 const PLATFORM_OPTIONS = ["Instagram", "LinkedIn", "Twitter"] as const;
@@ -163,7 +164,68 @@ function OrbScene() {
   );
 }
 
+function CopyResultButton({ text }: { text: string }) {
+  const [copied, setCopied] = useState(false);
+
+  const handleCopy = async () => {
+    try {
+      await navigator.clipboard.writeText(text);
+      setCopied(true);
+      setTimeout(() => setCopied(false), 2000);
+    } catch (err) {
+      console.error("Failed to copy:", err);
+    }
+  };
+
+  return (
+    <button
+      type="button"
+      onClick={handleCopy}
+      style={{
+        display: "inline-flex",
+        alignItems: "center",
+        gap: "0.5rem",
+        padding: "0.65rem 1rem",
+        borderRadius: "0.5rem",
+        border: "1px solid rgba(255,255,255,0.6)",
+        background: "linear-gradient(145deg, rgba(255,255,255,0.6), rgba(255,255,255,0.2))",
+        color: copied ? "#16a34a" : "#6f7778",
+        cursor: "pointer",
+        fontSize: "0.85rem",
+        fontWeight: 500,
+        transition: "all 0.25s ease",
+        backdropFilter: "blur(8px)",
+      }}
+      onMouseEnter={e => {
+        if (!copied) {
+          (e.currentTarget as HTMLButtonElement).style.background =
+            "linear-gradient(145deg, rgba(255,255,255,0.8), rgba(255,255,255,0.4))";
+        }
+      }}
+      onMouseLeave={e => {
+        if (!copied) {
+          (e.currentTarget as HTMLButtonElement).style.background =
+            "linear-gradient(145deg, rgba(255,255,255,0.6), rgba(255,255,255,0.2))";
+        }
+      }}
+    >
+      {copied ? (
+        <>
+          <Check size={16} />
+          Copied!
+        </>
+      ) : (
+        <>
+          <Copy size={16} />
+          Copy
+        </>
+      )}
+    </button>
+  );
+}
+
 function Hero() {
+  const { data: session } = useSession();
   const [theme, setTheme] = useState<"light" | "dark">("light");
   const [isMobile, setIsMobile] = useState(false);
   const [selectedPlatform, setSelectedPlatform] = useState<(typeof PLATFORM_OPTIONS)[number]>("Instagram");
@@ -185,11 +247,18 @@ function Hero() {
   const [placeholderIndex, setPlaceholderIndex] = useState(0);
   const [typedPlaceholder, setTypedPlaceholder] = useState("");
   const [isDeletingPlaceholder, setIsDeletingPlaceholder] = useState(false);
+  const [showLoginModal, setShowLoginModal] = useState(false);
 
   const submitGeneration = async () => {
     const trimmed = promptText.trim();
     if (!trimmed) {
       setGenerationError("Write a prompt first.");
+      return;
+    }
+
+    // Check if user is logged in
+    if (!session?.user) {
+      setShowLoginModal(true);
       return;
     }
 
@@ -953,12 +1022,167 @@ function Hero() {
                   <div className="text-sm font-medium text-[#4e565d]">
                     {generationResult.hashtags?.join(" ")}
                   </div>
+
+                  <div className="mt-4">
+                    <CopyResultButton text={`${generationResult.body}\n\n${generationResult.hashtags?.join(" ")}`} />
+                  </div>
                 </div>
               )}
             </div>
             <p className="mt-2 text-xs text-[#6f7778]">
               Tip: Press <span className="font-semibold">Ctrl/⌘ + Enter</span> to generate.
             </p>
+          </div>
+        )}
+
+        {!session?.user && (
+          <div className="mx-auto mt-6 w-full max-w-[48rem]">
+            <button
+              type="button"
+              onClick={() => void signIn("google")}
+              style={{
+                width: "100%",
+                borderRadius: "2rem",
+                padding: "1px",
+                background: "linear-gradient(145deg, rgba(255,255,255,0.95) 0%, rgba(255,255,255,0.3) 40%, rgba(255,255,255,0.6) 100%)",
+                boxShadow: "0 32px 64px rgba(68, 80, 55, 0.08), 0 8px 24px rgba(0,0,0,0.04), 0 2px 0 rgba(255,255,255,1) inset",
+                backdropFilter: "blur(24px)",
+                WebkitBackdropFilter: "blur(24px)",
+                border: "none",
+                cursor: "pointer",
+                transition: "all 0.25s ease",
+              }}
+              onMouseEnter={e => {
+                (e.currentTarget as HTMLButtonElement).style.boxShadow =
+                  "0 40px 80px rgba(68, 80, 55, 0.12), 0 10px 32px rgba(0,0,0,0.06), 0 2px 0 rgba(255,255,255,1) inset";
+              }}
+              onMouseLeave={e => {
+                (e.currentTarget as HTMLButtonElement).style.boxShadow =
+                  "0 32px 64px rgba(68, 80, 55, 0.08), 0 8px 24px rgba(0,0,0,0.04), 0 2px 0 rgba(255,255,255,1) inset";
+              }}
+            >
+              <span
+                style={{
+                  borderRadius: "calc(2rem - 1.5px)",
+                  background: "linear-gradient(160deg, rgba(255,255,255,0.82) 0%, rgba(255,255,255,0.54) 50%, rgba(255,255,255,0.72) 100%)",
+                  boxShadow: "0 1px 0 rgba(255,255,255,0.95) inset, 0 -1px 0 rgba(255,255,255,0.4) inset, inset 0 10px 30px rgba(255,255,255,0.5)",
+                  backdropFilter: "blur(20px)",
+                  WebkitBackdropFilter: "blur(20px)",
+                  position: "relative",
+                  overflow: "hidden",
+                  display: "flex",
+                  alignItems: "center",
+                  justifyContent: "center",
+                  gap: "0.5rem",
+                  padding: "0.9rem 1.35rem",
+                }}
+              >
+                <span
+                  style={{
+                    position: "absolute",
+                    top: 0,
+                    left: "8%",
+                    right: "8%",
+                    height: "1.5px",
+                    background: "linear-gradient(90deg, transparent, rgba(255,255,255,0.95) 30%, rgba(255,255,255,1) 50%, rgba(255,255,255,0.95) 70%, transparent)",
+                    borderRadius: "0 0 50% 50%",
+                    pointerEvents: "none",
+                  }}
+                />
+                <span
+                  style={{
+                    position: "absolute",
+                    top: 0,
+                    left: 0,
+                    right: 0,
+                    height: "45%",
+                    background: "linear-gradient(180deg, rgba(255,255,255,0.45) 0%, rgba(255,255,255,0.0) 100%)",
+                    borderRadius: "calc(2rem - 1.5px) calc(2rem - 1.5px) 60% 60% / 30px 30px 0 0",
+                    pointerEvents: "none",
+                  }}
+                />
+                <LogIn size={16} style={{ position: "relative", zIndex: 1 }} />
+                <span style={{ position: "relative", zIndex: 1, fontSize: "0.95rem", fontWeight: 500, color: "#18181b" }}>
+                  Login with Google
+                </span>
+              </span>
+            </button>
+          </div>
+        )}
+
+        {session?.user && (
+          <div className="mx-auto mt-6 w-full max-w-[48rem]">
+            <Link
+              href="/generate"
+              style={{
+                width: "100%",
+                borderRadius: "2rem",
+                padding: "1px",
+                background: "linear-gradient(145deg, rgba(255,255,255,0.95) 0%, rgba(255,255,255,0.3) 40%, rgba(255,255,255,0.6) 100%)",
+                boxShadow: "0 32px 64px rgba(68, 80, 55, 0.08), 0 8px 24px rgba(0,0,0,0.04), 0 2px 0 rgba(255,255,255,1) inset",
+                backdropFilter: "blur(24px)",
+                WebkitBackdropFilter: "blur(24px)",
+                border: "none",
+                cursor: "pointer",
+                transition: "all 0.25s ease",
+                display: "block",
+                textDecoration: "none",
+              }}
+              onMouseEnter={e => {
+                const el = e.currentTarget as HTMLAnchorElement;
+                el.style.boxShadow = "0 40px 80px rgba(68, 80, 55, 0.12), 0 10px 32px rgba(0,0,0,0.06), 0 2px 0 rgba(255,255,255,1) inset";
+              }}
+              onMouseLeave={e => {
+                const el = e.currentTarget as HTMLAnchorElement;
+                el.style.boxShadow = "0 32px 64px rgba(68, 80, 55, 0.08), 0 8px 24px rgba(0,0,0,0.04), 0 2px 0 rgba(255,255,255,1) inset";
+              }}
+            >
+              <span
+                style={{
+                  borderRadius: "calc(2rem - 1.5px)",
+                  background: "linear-gradient(160deg, rgba(255,255,255,0.82) 0%, rgba(255,255,255,0.54) 50%, rgba(255,255,255,0.72) 100%)",
+                  boxShadow: "0 1px 0 rgba(255,255,255,0.95) inset, 0 -1px 0 rgba(255,255,255,0.4) inset, inset 0 10px 30px rgba(255,255,255,0.5)",
+                  backdropFilter: "blur(20px)",
+                  WebkitBackdropFilter: "blur(20px)",
+                  position: "relative",
+                  overflow: "hidden",
+                  display: "flex",
+                  alignItems: "center",
+                  justifyContent: "center",
+                  gap: "0.5rem",
+                  padding: "0.9rem 1.35rem",
+                }}
+              >
+                <span
+                  style={{
+                    position: "absolute",
+                    top: 0,
+                    left: "8%",
+                    right: "8%",
+                    height: "1.5px",
+                    background: "linear-gradient(90deg, transparent, rgba(255,255,255,0.95) 30%, rgba(255,255,255,1) 50%, rgba(255,255,255,0.95) 70%, transparent)",
+                    borderRadius: "0 0 50% 50%",
+                    pointerEvents: "none",
+                  }}
+                />
+                <span
+                  style={{
+                    position: "absolute",
+                    top: 0,
+                    left: 0,
+                    right: 0,
+                    height: "45%",
+                    background: "linear-gradient(180deg, rgba(255,255,255,0.45) 0%, rgba(255,255,255,0.0) 100%)",
+                    borderRadius: "calc(2rem - 1.5px) calc(2rem - 1.5px) 60% 60% / 30px 30px 0 0",
+                    pointerEvents: "none",
+                  }}
+                />
+                <ArrowRight size={16} style={{ position: "relative", zIndex: 1 }} />
+                <span style={{ position: "relative", zIndex: 1, fontSize: "0.95rem", fontWeight: 500, color: "#18181b" }}>
+                  Go to Dashboard
+                </span>
+              </span>
+            </Link>
           </div>
         )}
 
@@ -983,6 +1207,142 @@ function Hero() {
         </div>
         */}
       </div>
+
+      {/* Login Modal */}
+      {showLoginModal && (
+        <div
+          style={{
+            position: "fixed",
+            inset: 0,
+            backgroundColor: "rgba(0, 0, 0, 0.5)",
+            display: "flex",
+            alignItems: "center",
+            justifyContent: "center",
+            zIndex: 50,
+          }}
+          onClick={() => setShowLoginModal(false)}
+        >
+          <div
+            style={{
+              borderRadius: "1.5rem",
+              padding: "1px",
+              background: "linear-gradient(145deg, rgba(255,255,255,0.95) 0%, rgba(255,255,255,0.3) 40%, rgba(255,255,255,0.6) 100%)",
+              boxShadow: "0 32px 64px rgba(68, 80, 55, 0.15), 0 8px 24px rgba(0,0,0,0.08)",
+              backdropFilter: "blur(24px)",
+              WebkitBackdropFilter: "blur(24px)",
+              maxWidth: "420px",
+              width: "90%",
+            }}
+            onClick={(e) => e.stopPropagation()}
+          >
+            <div
+              style={{
+                borderRadius: "calc(1.5rem - 1.5px)",
+                background: "linear-gradient(160deg, rgba(255,255,255,0.82) 0%, rgba(255,255,255,0.54) 50%, rgba(255,255,255,0.72) 100%)",
+                boxShadow: "0 1px 0 rgba(255,255,255,0.95) inset, 0 -1px 0 rgba(255,255,255,0.4) inset, inset 0 10px 30px rgba(255,255,255,0.5)",
+                backdropFilter: "blur(20px)",
+                WebkitBackdropFilter: "blur(20px)",
+                padding: "2.5rem 2rem",
+                position: "relative",
+                overflow: "hidden",
+              }}
+            >
+              <div
+                style={{
+                  position: "absolute",
+                  top: 0,
+                  left: "8%",
+                  right: "8%",
+                  height: "1.5px",
+                  background: "linear-gradient(90deg, transparent, rgba(255,255,255,0.95) 30%, rgba(255,255,255,1) 50%, rgba(255,255,255,0.95) 70%, transparent)",
+                  borderRadius: "0 0 50% 50%",
+                  pointerEvents: "none",
+                }}
+              />
+              <div
+                style={{
+                  position: "absolute",
+                  top: 0,
+                  left: 0,
+                  right: 0,
+                  height: "45%",
+                  background: "linear-gradient(180deg, rgba(255,255,255,0.45) 0%, rgba(255,255,255,0.0) 100%)",
+                  borderRadius: "calc(1.5rem - 1.5px) calc(1.5rem - 1.5px) 60% 60% / 30px 30px 0 0",
+                  pointerEvents: "none",
+                }}
+              />
+
+              <div style={{ position: "relative", zIndex: 1, textAlign: "center" }}>
+                <h2 style={{ fontSize: "1.5rem", fontWeight: 600, color: "#18181b", marginBottom: "0.75rem" }}>
+                  Ready to create?
+                </h2>
+                <p style={{ fontSize: "0.95rem", color: "#6f7778", marginBottom: "2rem", lineHeight: "1.5" }}>
+                  Sign in with Google to generate unlimited viral posts powered by AI.
+                </p>
+
+                <button
+                  type="button"
+                  onClick={() => void signIn("google")}
+                  style={{
+                    width: "100%",
+                    padding: "0.85rem 1.2rem",
+                    borderRadius: "0.75rem",
+                    border: "1px solid rgba(255,255,255,0.8)",
+                    background: "linear-gradient(145deg, rgba(255,255,255,0.7), rgba(255,255,255,0.3))",
+                    color: "#18181b",
+                    cursor: "pointer",
+                    fontSize: "0.95rem",
+                    fontWeight: 500,
+                    transition: "all 0.25s ease",
+                    backdropFilter: "blur(8px)",
+                    display: "flex",
+                    alignItems: "center",
+                    justifyContent: "center",
+                    gap: "0.5rem",
+                    marginBottom: "0.75rem",
+                  }}
+                  onMouseEnter={e => {
+                    (e.currentTarget as HTMLButtonElement).style.background =
+                      "linear-gradient(145deg, rgba(255,255,255,0.9), rgba(255,255,255,0.5))";
+                  }}
+                  onMouseLeave={e => {
+                    (e.currentTarget as HTMLButtonElement).style.background =
+                      "linear-gradient(145deg, rgba(255,255,255,0.7), rgba(255,255,255,0.3))";
+                  }}
+                >
+                  <LogIn size={16} />
+                  Login with Google
+                </button>
+
+                <button
+                  type="button"
+                  onClick={() => setShowLoginModal(false)}
+                  style={{
+                    width: "100%",
+                    padding: "0.85rem 1.2rem",
+                    borderRadius: "0.75rem",
+                    border: "1px solid rgba(0,0,0,0.1)",
+                    background: "transparent",
+                    color: "#6f7778",
+                    cursor: "pointer",
+                    fontSize: "0.95rem",
+                    fontWeight: 500,
+                    transition: "all 0.25s ease",
+                  }}
+                  onMouseEnter={e => {
+                    (e.currentTarget as HTMLButtonElement).style.background = "rgba(0,0,0,0.04)";
+                  }}
+                  onMouseLeave={e => {
+                    (e.currentTarget as HTMLButtonElement).style.background = "transparent";
+                  }}
+                >
+                  Maybe later
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
     </section>
   );
 }

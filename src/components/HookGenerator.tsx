@@ -14,7 +14,7 @@ export function HookGenerator() {
   const [isLoading, setIsLoading] = useState(false);
   const [hooks, setHooks] = useState<string[] | null>(null);
   const [error, setError] = useState<string | null>(null);
-  const [toast] = useState<string | null>(null);
+  const [toast, setToast] = useState<string | null>(null);
 
   const handleGenerate = async () => {
     if (!topic.trim()) {
@@ -41,6 +41,7 @@ export function HookGenerator() {
         .filter((line: string) => line.length > 0);
 
       setHooks(parsedHooks.length > 0 ? parsedHooks : [hooksText]);
+      setToast(`Successfully generated ${parsedHooks.length > 0 ? parsedHooks.length : 1} hooks!`);
     } catch (err) {
       setError(err instanceof Error ? err.message : 'Failed to generate hooks');
     } finally {
@@ -88,7 +89,7 @@ export function HookGenerator() {
               Target Platform
             </label>
             <div className="grid grid-cols-3 gap-2">
-              {(['Instagram', 'Twitter', 'LinkedIn'] as const).map((p) => (
+              {(['Instagram', 'Twitter/X', 'LinkedIn'] as const).map((p) => (
                 <button
                   key={p}
                   onClick={() => setPlatform(p)}
