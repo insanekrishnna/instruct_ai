@@ -21,15 +21,15 @@ function withTimeout<T>(promise: Promise<T>, ms: number): Promise<T> {
 async function generateOnce(prompt: string): Promise<string> {
   // DEV MOCK -- set MOCK_GEMINI=true in .env.local to skip real API calls
   if (process.env.NODE_ENV === 'development' && process.env.MOCK_GEMINI === 'true') {
-    await new Promise((r) => setTimeout(r, 1000)); // simulate delay
-    return `Just had the most underrated realization.
+  await new Promise((r) => setTimeout(r, 1000));
+  return `Just had the most underrated realization.
 
-The people who talk the least about what they're building are usually the ones shipping the most.
+The people who talk the least about what they are building are usually the ones shipping the most.
 
 Silence is a strategy. Not everyone needs to see your process.
 
 #buildinpublic #startuplife #creatoreconomy #capmax #viral`;
-  }
+}
 
   const apiKey = process.env.GEMINI_API_KEY;
   if (!apiKey) throw new Error('GEMINI_API_KEY is not configured');

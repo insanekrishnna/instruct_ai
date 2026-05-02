@@ -244,6 +244,11 @@ export function processOutput(
 ): { body: string; hashtags: string[]; wordCount: number; valid: boolean } {
   const cleaned = cleanOutput(rawText);
   const { body, hashtags } = extractHashtags(cleaned);
+
+   console.log("CLEANED:", cleaned);
+  console.log("BODY:", body);
+  console.log("HASHTAGS:", hashtags);
+  
   const validation = validateOutput(body, wordLimit);
 
   const finalHashtags =
