@@ -1005,7 +1005,7 @@ function Hero() {
               )}
 
               {generationResult && (
-                <div className="space-y-3">
+                <div style={{ display: "flex", flexDirection: "column", gap: "0.75rem" }}>
                   <div className="flex flex-wrap items-center justify-between gap-2">
                     <p className="text-sm font-medium text-[#2f3638]">
                       Generated for {generationResult.platform} · {generationResult.wordCount} words
@@ -1015,9 +1015,9 @@ function Hero() {
                     </p>
                   </div>
 
-                  <div className="whitespace-pre-wrap text-[0.98rem] leading-6 text-[#1e1d1d]">
+                  <p style={{ whiteSpace: "pre-wrap", fontSize: "0.98rem", lineHeight: "1.6", color: "#111111", margin: 0, display: "block" }}>
                     {generationResult.body}
-                  </div>
+                  </p>
 
                   <div className="text-sm font-medium text-[#4e565d]">
                     {generationResult.hashtags?.join(" ")}
