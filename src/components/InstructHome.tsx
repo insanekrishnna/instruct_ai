@@ -1029,7 +1029,7 @@ function Hero() {
                 </div>
               )}
             </div>
-            <p className="mt-2 text-xs text-[#6f7778]">
+            <p className="mt-3 text-xs text-[#6f7778]">
               Tip: Press <span className="font-semibold">Ctrl/⌘ + Enter</span> to generate.
             </p>
           </div>
