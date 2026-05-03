@@ -2,6 +2,14 @@ import { GoogleGenerativeAI } from '@google/generative-ai';
 
 const MODEL = "gemini-2.0-flash";
 
+const API_KEYS = [
+
+  process.env.GEMINI_API_KEY,
+  process.env.GEMINI_API_KEY_1,
+  process.env.GEMINI_API_KEY_2,
+  process.env.GEMINI_API_KEY_3,
+].filter(Boolean) as string[];
+
 function withTimeout<T>(promise: Promise<T>, ms: number): Promise<T> {
   return new Promise<T>((resolve, reject) => {
     const id = setTimeout(() => reject(new Error('Gemini request timed out')), ms);
@@ -31,8 +39,9 @@ Silence is a strategy. Not everyone needs to see your process.
 #buildinpublic #startuplife #creatoreconomy #capmax #viral`;
 }
 
-  const apiKey = process.env.GEMINI_API_KEY;
-  if (!apiKey) throw new Error('GEMINI_API_KEY is not configured');
+  if (API_KEYS.length === 0) throw new Error('No GEMINI_API_KEY configured');
+  
+  const apiKey = API_KEYS[Math.floor(Math.random() * API_KEYS.length)];
 
   const genAI = new GoogleGenerativeAI(apiKey);
   const model = genAI.getGenerativeModel({
@@ -56,3 +65,4 @@ export async function generatePost(prompt: string): Promise<string> {
     return await withTimeout(generateOnce(prompt), 30_000);
   }
 }
+
