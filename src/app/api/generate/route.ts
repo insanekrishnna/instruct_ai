@@ -3,12 +3,20 @@ import { auth } from '@/lib/auth';
 import { checkCredits, useCredit as spendCredit } from '@/lib/credits';
 import { generatePost } from '@/lib/gemini';
 import { prisma } from '@/lib/prisma';
-import { buildPrompt, type Platform, type Tone, type WordLimit } from '@/lib/prompts';
+import { buildPrompt, buildHookPrompt, buildRepurposePrompt, buildThreadPrompt, type Platform, type Tone, type WordLimit } from '@/lib/prompts';
 import { processOutput } from '@/lib/postProcessor';
 import { checkRateLimit, consumeRateLimit } from '@/lib/ratelimit';
 
 export const runtime = 'nodejs';
 export const maxDuration = 60;
+
+// Request deduplication cache: promptHash -> { result, timestamp }
+const requestCache = new Map<string, { result: string; timestamp: number }>();
+const CACHE_TTL = 5000; // 5 seconds
+
+function hashPrompt(feature: string, prompt: string): string {
+  return `${feature}:${prompt}`;
+}
 
 type GenerateBody = {
   feature?: string;
@@ -51,8 +59,8 @@ export async function POST(req: Request) {
   }
   
   const trimmedPrompt = prompt.trim();
-  if (trimmedPrompt.length < 3 || trimmedPrompt.length > 2000) {
-    return error(400, 'INVALID_INPUT', 'Prompt length must be between 3 and 2000 characters');
+  if (trimmedPrompt.length < 3 || trimmedPrompt.length > 500) {
+    return error(400, 'INVALID_INPUT', 'Prompt too long, max 500 characters');
   }
 
   // For caption feature, validate required fields
@@ -75,12 +83,38 @@ export async function POST(req: Request) {
     return error(429, 'RATE_LIMITED', 'Too many requests', { remaining: rl.remaining });
   }
 
+  // Check for mock mode OR if quota is exhausted
+  const isMock = process.env.NODE_ENV === 'development' && process.env.MOCK_GEMINI === 'true';
+
+  // Request deduplication: check if we have a cached result for this exact request (works in all environments)
+  const requestHash = hashPrompt(feature || 'caption', trimmedPrompt);
+  const cached = requestCache.get(requestHash);
+  if (cached && Date.now() - cached.timestamp < CACHE_TTL) {
+    return NextResponse.json({
+      body: cached.result,
+      hashtags: [],
+      wordCount: cached.result.split(/\s+/).length,
+      remaining: -1,
+      cached: true,
+    });
+  }
+
   let fullPrompt: string;
   if (feature === 'caption' || !feature) {
     // Caption generation with buildPrompt
     fullPrompt = buildPrompt(platform as Platform, tone as Tone, wordLimit as WordLimit, trimmedPrompt);
+  } else if (feature === 'hook') {
+    // Hook generation with optimized prompt
+    fullPrompt = buildHookPrompt(trimmedPrompt, platform as string);
+  } else if (feature === 'repurpose') {
+    // Repurpose with optimized prompt
+    const outputFormat = (body as any)?.outputFormat || 'Instagram caption';
+    fullPrompt = buildRepurposePrompt(trimmedPrompt, outputFormat);
+  } else if (feature === 'thread') {
+    // Thread generation with optimized prompt
+    fullPrompt = buildThreadPrompt(trimmedPrompt);
   } else {
-    // For other features, use prompt as-is with minimal processing
+    // Default: use prompt as-is
     fullPrompt = trimmedPrompt;
   }
 
@@ -88,7 +122,16 @@ export async function POST(req: Request) {
   try {
     raw = await generatePost(fullPrompt);
   } catch (e) {
-    return error(500, 'GENERATION_FAILED', e instanceof Error ? e.message : 'Gemini generation failed');
+    const errorMessage = e instanceof Error ? e.message : 'Gemini generation failed';
+    
+    // Check if this is a quota error and provide helpful message
+    if (errorMessage.includes('429') || errorMessage.includes('quota') || errorMessage.includes('RESOURCE_EXHAUSTED')) {
+      return error(429, 'QUOTA_EXCEEDED', 'Gemini API quota exhausted. Please try again tomorrow or set MOCK_GEMINI=true in .env.local for development.', {
+        retryAfter: 86400, // 24 hours
+      });
+    }
+    
+    return error(500, 'GENERATION_FAILED', errorMessage);
   }
 
   const processed = feature === 'caption' || !feature 
@@ -101,6 +144,9 @@ export async function POST(req: Request) {
   }
 
   await consumeRateLimit(session.user.id, session.user.plan);
+
+  // Cache the raw output for deduplication (works in all environments to prevent duplicate calls)
+  requestCache.set(requestHash, { result: processed.body, timestamp: Date.now() });
 
   // Persist generation for captions only; keep only last 3 per user.
   if (feature === 'caption' || !feature) {

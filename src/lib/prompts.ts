@@ -26,43 +26,29 @@ const WORD_LIMIT_RANGE: Record<WordLimit, string> = {
 };
 
 export function buildPrompt(platform: Platform, tone: Tone, wordLimit: WordLimit, userPrompt: string): string {
-  const platformContext = PLATFORM_CONTEXT[platform];
-  const toneDefinition = TONE_DEFINITION[tone];
-  const wordLimitRange = WORD_LIMIT_RANGE[wordLimit];
+  return `Write a ${platform} post about: ${userPrompt}
 
-  return `You are a world-class social media copywriter who has gone viral multiple times.
-You write for real humans, not algorithms.
+Tone: ${tone}. Length: ${WORD_LIMIT_RANGE[wordLimit]} words.
+Platform style: ${PLATFORM_CONTEXT[platform]}
 
-Task: Write a ${platform} post
+Rules: No em dashes, no corporate words, no AI-sounding phrases. Write like a real human. Add 5 hashtags at end.
 
-Platform rules: ${platformContext}
-Tone: ${tone} -- ${toneDefinition}
-Length: ${wordLimit} (${wordLimitRange} words)
-Topic: ${userPrompt}
+Return ONLY the post and hashtags.`;
+}
 
-CRITICAL RULES -- FOLLOW STRICTLY:
-1. NEVER start with "In today's world" or "In the age of AI"
-2. NEVER use em dashes (--)
-3. NEVER write in bullet points unless platform demands it
-4. NEVER sound like ChatGPT wrote it
-5. NEVER use corporate buzzwords: leverage, synergy, utilize, pivot, disrupt
-6. NEVER be generic -- every line must feel specific and intentional
-7. DO write like a real person with opinions
-8. DO use micro-storytelling -- even in short posts
-9. DO vary sentence length -- mix short punchy lines with longer ones
-10. DO include one unexpected angle or perspective
-11. DO make the first line impossible to scroll past
-12. DO sound like the user wrote it themselves after thinking hard
+export function buildHookPrompt(topic: string, platform?: string): string {
+  return `Generate 8 proven hook formats for: ${topic}
+${platform ? `\nPlatform: ${platform}` : ''}
+Format: "1. [Hook]" on separate lines. Return ONLY the 8 hooks.`;
+}
 
-Anti-AI patterns to actively avoid:
-- Perfect grammar throughout (add natural flow)
-- Over-structured writing
-- Hedging language ("it's important to note that")
-- Fake enthusiasm ("I'm excited to share")
-- Lists disguised as paragraphs
+export function buildRepurposePrompt(content: string, outputFormat: string): string {
+  return `Repurpose as ${outputFormat}: ${content.slice(0, 300)}
+Return ONLY the ${outputFormat}.`;
+}
 
-After the post, on a new line add exactly 5 relevant hashtags.
-Format: #hashtag1 #hashtag2 #hashtag3 #hashtag4 #hashtag5
-
-Return ONLY the post and hashtags. Nothing else. No explanations.`;
+export function buildThreadPrompt(topic: string): string {
+  return `Create a 5-tweet thread on: ${topic}
+Format: "1. [tweet]" on separate lines. Real, human tone.
+Return ONLY the 5 tweets.`;
 }
