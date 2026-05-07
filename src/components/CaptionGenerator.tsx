@@ -21,7 +21,7 @@ type SpeechRecognitionCtorLike = new () => {
 };
 
 export function CaptionGenerator() {
-  const { profile } = useUserProfile();
+  useUserProfile();
   const fileInputRef = useRef<HTMLInputElement>(null);
 
   const [prompt, setPrompt] = useState('');

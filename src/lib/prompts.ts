@@ -11,14 +11,6 @@ const PLATFORM_CONTEXT: Record<Platform, string> = {
     'Professional but human. Storytelling with insight. First line must stop scroll. Data or personal experience. Thought leadership tone.',
 };
 
-const TONE_DEFINITION: Record<Tone, string> = {
-  Minimal: 'Clean, no fluff, every word earns its place, white space friendly',
-  Aggressive: 'Bold claims, confrontational, no apologies, strong opinions',
-  Storytelling: 'Narrative arc, personal experience, beginning-middle-end, emotional',
-  Curious: 'Questions that make people think, open loops, wonder-driven',
-  Funny: 'Wit, timing, unexpected twist, relatable absurdity, self aware',
-};
-
 const WORD_LIMIT_RANGE: Record<WordLimit, string> = {
   Short: '50-80',
   Medium: '100-150',

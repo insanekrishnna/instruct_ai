@@ -248,8 +248,13 @@ function Hero() {
   const [typedPlaceholder, setTypedPlaceholder] = useState("");
   const [isDeletingPlaceholder, setIsDeletingPlaceholder] = useState(false);
   const [showLoginModal, setShowLoginModal] = useState(false);
+  const inFlightSubmitRef = useRef(false);
 
   const submitGeneration = async () => {
+    if (inFlightSubmitRef.current || isGenerating) {
+      return;
+    }
+
     const trimmed = promptText.trim();
     if (!trimmed) {
       setGenerationError("Write a prompt first.");
@@ -267,7 +272,9 @@ function Hero() {
 
     const wordNum = Number.parseInt(selectedWordLimit.split(" ")[0] ?? "50", 10);
     const wordLimit = wordNum <= 80 ? "Short" : wordNum <= 150 ? "Medium" : "Long";
+    const requestId = crypto.randomUUID();
 
+    inFlightSubmitRef.current = true;
     setIsGenerating(true);
     setGenerationError(null);
     setGenerationResult(null);
@@ -275,7 +282,11 @@ function Hero() {
     try {
       const res = await fetch("/api/generate", {
         method: "POST",
-        headers: { "Content-Type": "application/json" },
+        headers: {
+          "Content-Type": "application/json",
+          "x-request-id": requestId,
+          "x-user-action-id": requestId,
+        },
         redirect: "follow",
         body: JSON.stringify({
           platform,
@@ -318,6 +329,7 @@ function Hero() {
     } catch (e) {
       setGenerationError(e instanceof Error ? e.message : "Generation failed.");
     } finally {
+      inFlightSubmitRef.current = false;
       setIsGenerating(false);
     }
   };

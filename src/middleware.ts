@@ -4,6 +4,7 @@ const PROTECTED_PREFIXES = [
   '/generate',
   '/history',
   '/settings',
+  '/api/chat',
   '/api/generate',
   '/api/credits',
   '/api/history',

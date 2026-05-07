@@ -4,6 +4,20 @@ import { useState, useEffect } from 'react';
 import type { UserProfile } from '@/lib/types';
 
 const PROFILE_STORAGE_KEY = 'viral-caption-user-profile';
+const pendingGenerateRequests = new Map<string, Promise<NormalizedGenerateResponse>>();
+
+type GenerateOptions = Record<string, unknown>;
+
+export type NormalizedGenerateResponse = {
+  body: string;
+  content: string | string[];
+  hashtags: string[];
+  wordCount: number;
+  remaining: number;
+  platform?: string;
+  cached?: boolean;
+  debug?: Record<string, unknown>;
+};
 
 export function useUserProfile() {
   const [profile, setProfile] = useState<UserProfile | null>(null);
@@ -50,22 +64,48 @@ export function useToast() {
 export async function generateContent(
   feature: string,
   prompt: string,
-  options: Record<string, unknown> = {}
+  options: GenerateOptions = {}
 ) {
-  const response = await fetch('/api/generate', {
-    method: 'POST',
-    headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify({
-      feature,
-      prompt,
-      ...options,
-    }),
-  });
-
-  if (!response.ok) {
-    const error = await response.json();
-    throw new Error(error.error || 'Failed to generate content');
+  const payload = {
+    feature,
+    prompt,
+    ...options,
+  };
+  const requestFingerprint = JSON.stringify(payload);
+  const existingRequest = pendingGenerateRequests.get(requestFingerprint);
+  if (existingRequest) {
+    return existingRequest;
   }
 
-  return response.json();
+  const requestId = crypto.randomUUID();
+  const requestPromise = (async () => {
+    const response = await fetch('/api/generate', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'x-request-id': requestId,
+        'x-user-action-id': requestId,
+      },
+      body: JSON.stringify(payload),
+    });
+
+    if (!response.ok) {
+      const error = await response.json();
+      throw new Error(error.error || 'Failed to generate content');
+    }
+
+    const result = await response.json();
+    return {
+      ...result,
+      content: result.body,
+    } satisfies NormalizedGenerateResponse;
+  })();
+
+  pendingGenerateRequests.set(requestFingerprint, requestPromise);
+
+  try {
+    return await requestPromise;
+  } finally {
+    pendingGenerateRequests.delete(requestFingerprint);
+  }
 }

@@ -1,7 +1,7 @@
 'use client';
 
 import { Copy, Check } from 'lucide-react';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 
 interface ToastProps {
   message: string;
@@ -11,9 +11,12 @@ interface ToastProps {
 export function Toast({ message, duration = 2000 }: ToastProps) {
   const [isVisible, setIsVisible] = useState(true);
 
-  if (!isVisible) return null;
+  useEffect(() => {
+    const timeoutId = setTimeout(() => setIsVisible(false), duration);
+    return () => clearTimeout(timeoutId);
+  }, [duration, message]);
 
-  setTimeout(() => setIsVisible(false), duration);
+  if (!isVisible) return null;
 
   return (
     <div className="fixed bottom-4 right-4 bg-green-500 text-white px-4 py-2 rounded-lg shadow-lg animate-fade-in z-50">
@@ -60,8 +63,8 @@ export function CopyButton({ text, className = '' }: CopyButtonProps) {
       setTimeout(() => setCopied(false), 2000);
     } catch (err) {
       console.error('Failed to copy text: ', err);
-      // Optionally, show an error to the user
-      alert('Failed to copy text: ' + err.message);
+      const message = err instanceof Error ? err.message : 'Unknown copy error';
+      alert('Failed to copy text: ' + message);
     }
   };
 
